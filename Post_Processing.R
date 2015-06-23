@@ -1,3 +1,9 @@
+# CHaMP Hydraulic Modeling Post-Processing R-Code
+# Author: Matt Nahorniak, South Fork Research
+# matt@southforkresearch.org
+#####################################################33333
+
+
 
 Post.Processcing.R.Code.Version = 1.0
 #memory.limit(16194)
