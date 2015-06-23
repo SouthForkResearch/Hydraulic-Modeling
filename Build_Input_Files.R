@@ -1,3 +1,9 @@
+##########################################################
+# R-code to build hydraulic model input files.
+# Author: Matt Nahorniak, South Fork Research
+# matt@southforkresearch.org
+##########################################################
+
 Build.Input.File.R.Version = 1.0
 setwd( "C:/Matt-SFR Files/Hydraulic Modeling/R Code to Build Input Files")
 
