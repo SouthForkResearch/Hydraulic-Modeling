@@ -144,6 +144,7 @@ WorkingDir
 #wd = paste(WorkingDir,"/", as.character(site.list$SiteID[k]),sep="")
 wd = WorkingDir
 wd=normalizePath(wd)
+wd
 cat("chdir \"",wd,"\"", sep="", file = "batchprocess.bat",append=T)
 cat("
 d_hydro test.xml
@@ -548,15 +549,20 @@ savedwd
 site.list$SiteID[k]
 site.list$Year
 
-
+results.folder
+site.list$VisitID[k]
 sub.folder = paste(results.folder,site.list$SiteID[k],"_",
     site.list$Year[k],"_VisitID_",site.list$VisitID[k],"/",sep="")
 sub.folder
 dir.create(sub.folder)
-QA.folder = paste(sub.folder,"/QA Plots/", sep="")
+QA.folder = paste(sub.folder,"QA Plots/", sep="")
+QA.folder
 dir.create(QA.folder)
 
-jpeg(paste(QA.folder,"Bathymetry_",site.list$SiteID[k],site.list$Year[k],".jpg",sep=""), 6,6, units='in', res=600)
+
+jpeg(
+paste(QA.folder,"Bathymetry_",site.list$SiteID[k],site.list$Year[k],".jpg",sep="")
+, 6,6, units='in', res=600)
 plot(GridX, GridY, col=color, pch=19, cex=.1,
 main=paste(site.list$SiteID[k],"Delft 3D Bathymetry Input"),
 xlab="easting",
