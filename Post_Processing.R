@@ -567,18 +567,28 @@ DEM.Results = DEM.Results[((DEM.Results$Depth > 0) & (abs(DEM.Results$Depth.Erro
 DEM.Results = DEM.Results[DEM.Results$BedLevel > -9999,]
 
 # Write DEM Grid Output File!
-sub.folder = paste(results.folder,site.list$SiteID[k],"_",
-    site.list$Year[k],"_VisitID_",site.list$VisitID[k],"/",sep="")
+#sub.folder = paste(results.folder,site.list$SiteID[k],"_",
+#    site.list$Year[k],"_VisitID_",site.list$VisitID[k],"/",sep="")
+
+sub.folder = site.list$Directory[k]
+sub.folder = gsub("HydroModelInputs/artifacts/","",sub.folder)
+sub.folder = paste(sub.folder, "HydroModelResults/", sep="")
+sub.folder
+
 dir.create(sub.folder)
 
+#write.csv(DEM.Results, paste(sub.folder,"DEM_GRID_",
+#   site.list$SiteID[k],"_",site.list$Year[k],"VisitID_",site.list$VisitID[k],"_Delft3D_Results.csv", sep=""), row.names=F)
+write.csv(DEM.Results, paste(sub.folder,"dem_grid_results.csv",sep=""), row.names=F)
+
+
+#write.csv(Meta.Data, paste(sub.folder,"Meta_Data_",
+#   site.list$SiteID[k],"_",site.list$Year[k],"VisitID_",site.list$VisitID[k],"_Delft3D_Results.csv", sep=""))
+write.csv(Meta.Data, paste(sub.folder,"Meta_Data.csv", sep=""))
 
 
 
-write.csv(DEM.Results, paste(sub.folder,"DEM_GRID_",
-   site.list$SiteID[k],"_",site.list$Year[k],"VisitID_",site.list$VisitID[k],"_Delft3D_Results.csv", sep=""), row.names=F)
-write.csv(Meta.Data, paste(sub.folder,"Meta_Data_",
-   site.list$SiteID[k],"_",site.list$Year[k],"VisitID_",site.list$VisitID[k],"_Delft3D_Results.csv", sep=""))
-
+# Write the xml output file here!
 
 # Also, copy the "diag" file into the results folder.
 file.copy(from = paste(WorkingDir,"/tri-diag.test", sep=""),
@@ -595,7 +605,7 @@ file.copy(from = paste(WorkingDir,"/tri-diag.test", sep=""),
 names(DEM.Results)
 colorp
 
-dir.create(paste(sub.folder,"plots/", sep=""))
+#dir.create(paste(sub.folder,"plots/", sep=""))
 j=12
 j=7
 j=3
@@ -603,8 +613,11 @@ for (j in 3:12) {
 print(j)
 
 jpeg(
-paste(sub.folder, "plots/", site.list$SiteID[k],"_",site.list$Year[k],
-   "VisitID_",site.list$VisitID[k],"_",names(DEM.Results)[j],".jpg",sep=""),
+paste(sub.folder, 
+#"plots/", 
+#site.list$SiteID[k],"_",site.list$Year[k],
+#   "VisitID_",site.list$VisitID[k],"_",
+names(DEM.Results)[j],".jpg",sep=""),
     7.5,6.5, units='in', res=600)
 
 

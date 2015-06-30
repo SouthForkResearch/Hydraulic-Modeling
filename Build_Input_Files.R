@@ -551,18 +551,27 @@ site.list$Year
 
 results.folder
 site.list$VisitID[k]
-sub.folder = paste(results.folder,site.list$SiteID[k],"_",
-    site.list$Year[k],"_VisitID_",site.list$VisitID[k],"/",sep="")
+#sub.folder = paste(results.folder,site.list$SiteID[k],"_",
+#    site.list$Year[k],"_VisitID_",site.list$VisitID[k],"/",sep="")
+
+sub.folder = site.list$Directory[k]
+sub.folder = gsub("HydroModelInputs/artifacts/","",sub.folder)
+sub.folder = paste(sub.folder, "HydroModelResults/", sep="")
+sub.folder
+
 sub.folder
 dir.create(sub.folder)
-QA.folder = paste(sub.folder,"QA Plots/", sep="")
-QA.folder
+QA.folder = sub.folder
+# QA plots used to go in separate folder.  Now sticking them here to be consistent
+# with output on cm.org.
+#paste(sub.folder,"QA Plots/", sep="")
+#QA.folder
 dir.create(QA.folder)
 
 
-jpeg(
-paste(QA.folder,"Bathymetry_",site.list$SiteID[k],site.list$Year[k],".jpg",sep="")
-, 6,6, units='in', res=600)
+
+#jpeg(paste(QA.folder,"Bathymetry_",site.list$SiteID[k],site.list$Year[k],".jpg",sep=""), 6,6, units='in', res=600)
+jpeg(paste(QA.folder,"Bathymetry.jpg",sep=""), 6,6, units='in', res=600)
 plot(GridX, GridY, col=color, pch=19, cex=.1,
 main=paste(site.list$SiteID[k],"Delft 3D Bathymetry Input"),
 xlab="easting",
@@ -583,7 +592,8 @@ dev.off()
 # Plot Water Surface Elevation #########################
 #
 
-jpeg(paste(QA.folder,"WS_Elevation_",site.list$SiteID[k],site.list$Year[k],".jpg",sep=""), 6,6, units='in', res=600)
+#jpeg(paste(QA.folder,"WS_Elevation_",site.list$SiteID[k],site.list$Year[k],".jpg",sep=""), 6,6, units='in', res=600)
+jpeg(paste(QA.folder,"WS_Elevation.jpg",sep=""), 6,6, units='in', res=600)
 
 color = colorp[round((-1*WS.Z)/max(-1*WS.Z)*48)+1]
 color[depth == 0] = "white"
@@ -627,7 +637,9 @@ simtime = max(10, round(Min.Sim.sec / 60 * 2))
 
 min(Wdepth)
 max(Wdepth)
-jpeg(paste(QA.folder,"W_Depth",site.list$SiteID[k],site.list$Year[k],".jpg",sep=""), 6,6, units='in', res=600)
+#jpeg(paste(QA.folder,"W_Depth",site.list$SiteID[k],site.list$Year[k],".jpg",sep=""), 6,6, units='in', res=600)
+jpeg(paste(QA.folder,"W_Depth.jpg",sep=""), 6,6, units='in', res=600)
+
 color = colorp[round((Wdepth)/max(Wdepth)*48)+1]
 color[Wdepth == 0] = "white"
 plot(GridX, GridY, col=color, pch=19, cex=.1,
@@ -858,7 +870,8 @@ inlet.discharge = discharge* inlet.depth / sum(inlet.depth)
 #inlet.discharge
 
 
-jpeg(paste(QA.folder,"Boundary_Conditions_",site.list$SiteID[k],site.list$Year[k],".jpg",sep=""), 6,6, units='in', res=600)
+#jpeg(paste(QA.folder,"Boundary_Conditions_",site.list$SiteID[k],site.list$Year[k],".jpg",sep=""), 6,6, units='in', res=600)
+jpeg(paste(QA.folder,"Boundary_Conditions.jpg",sep=""), 6,6, units='in', res=600)
 
 ################################################################
 ### Make plot for paper #####
