@@ -6,6 +6,10 @@
 ##########################################################
 
 Build.Input.File.R.Version = 1.0
+Delft3D.Version = "4.01.00.rc.02"
+Operator = "Matt Nahorniak"
+
+
 setwd( "C:/Matt-SFR Files/Hydraulic Modeling/R Code to Build Input Files")
 
 results.folder = "c:/Matt-SFR Files/Hydraulic Modeling/Delft3D Results Files/"
@@ -1268,12 +1272,18 @@ file= "test.xml")
 # Create MetaData file
 # Surface Roughness
 
+names(site.list)
 meta.data = list(
 "VisitID"=site.list$VisitID[k],
+"D84"=site.list$D84,
 "Roughness Input" = Ccofu,
 "HEV" = HEV,
 "TrimLength"=slop,
-"Discharge" = discharge,
+"Discharge" = discharge, #modeled discharge
+"Measured_Discharge" = site.list$Discharge[k],
+"Year"=site.list$Year[k],
+"WatershedName"=site.list$WatershedName[k],
+"Exit_BC"=outflow.ws.level,
 "Left.Reference" =  ref.left,
 "Top.Reference" = ref.top,
 "Comp.Grid.Spacing" = DX,
