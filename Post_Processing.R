@@ -591,26 +591,31 @@ names(Meta.Data)
 # Write the xml output file here!
 
 
-cat(paste(
-"<model>CHaMP_hydro_model<model>
-<run_datetime>",Meta.Data$Post.Processing.Date.Time,"</run_datetime>
-<version>",Meta.Data$Delft3DVersion,"</version>
-<Delft3d.version>",Meta.Data$Delft3d.Version,"<Delft3d.version>
-<PreProcessing.version>",Meta.Data$Build.Input.File.R.Version,"</PreProcessing.version>
-<PostProcessing.version>",Meta.Data$Build.Input.File.R.Version,"</PostProcessing.version>
-<visit>",Meta.Data$VisitID,"</visit>
-<operator>",Meta.Data$Operator,"</operator>
-		<d84>",Meta.Data$D84,"</d84>
-		<surface_roughness>",Meta.Data$Roughness.Input,"</surface_roughness>
-		<measured_discharge>",Meta.Data$Measured_Discharge,"</measured_discharge>
-		<modeled_discharge>",Meta.Data$Discharge,"</modeled_discharge>
-		<downstream_boundary>",Meta.Data$Exit_BC,"</downstream_boundary>
-		<trim_length>",Meta.Data$TrimLength,"</trim_length>
-		<HEV>",Meta.Data$HEV,"</HEV>
-		<left_reference>",Meta.Data$Left.Reference,"</left_reference>
-		<top_reference>",Meta.Data$Top.Reference,"<top_reference>
-		<computational_grid_spacing>",Meta.Data$Comp.Grid.Spacing,"</computational_grid_spacing>
-	</data> 
+cat(paste("?xml version=\"1.0\" encoding=\"utf-8\"?>
+<model_results>
+       <model>CHaMP_hydro_model<model>
+       <run_datetime>",Meta.Data$Post.Processing.Date.Time,"</run_datetime>
+       <version>",Meta.Data$Delft3DVersion,"</version>
+       <Delft3d.version>",Meta.Data$Delft3d.Version,"<Delft3d.version>
+       <PreProcessing.version>",Meta.Data$Build.Input.File.R.Version,"</PreProcessing.version>
+       <PostProcessing.version>",Meta.Data$Build.Input.File.R.Version,"</PostProcessing.version>
+       <visit>",Meta.Data$VisitID,"</visit>
+       <operator>",Meta.Data$Operator,"</operator>
+       <year>",Meta.Data$Year,"</year>
+       <watershed>",Meta.Data$WatershedName,"</watershed>
+       <data>
+            <d84>",Meta.Data$D84,"</d84>
+            <surface_roughness>",Meta.Data$Roughness.Input,"</surface_roughness>
+            <measured_discharge>",Meta.Data$Measured_Discharge,"</measured_discharge>
+            <modeled_discharge>",Meta.Data$Discharge,"</modeled_discharge>
+            <downstream_boundary>",Meta.Data$Exit_BC,"</downstream_boundary>
+            <trim_length>",Meta.Data$TrimLength,"</trim_length>
+            <HEV>",Meta.Data$HEV,"</HEV>
+            <left_reference>",Meta.Data$Left.Reference,"</left_reference>
+            <top_reference>",Meta.Data$Top.Reference,"<top_reference>
+            <computational_grid_spacing>",Meta.Data$Comp.Grid.Spacing,"</computational_grid_spacing>
+       </data> 
+</model_results>
 ",sep=""),
 file= paste(sub.folder,"reference.xml"))
 ##############################################################
