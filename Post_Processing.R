@@ -590,15 +590,18 @@ names(Meta.Data)
 
 # Write the xml output file here!
 
+#print(paste("k=",k,sub.folder))
+cat("", file= paste(sub.folder,"summary.xml"))
+Meta.Data
 
 cat(paste("?xml version=\"1.0\" encoding=\"utf-8\"?>
 <model_results>
-       <model>CHaMP_hydro_model<model>
+       <model>delft3D<model>
        <run_datetime>",Meta.Data$Post.Processing.Date.Time,"</run_datetime>
-       <version>",Meta.Data$Delft3DVersion,"</version>
-       <Delft3d.version>",Meta.Data$Delft3d.Version,"<Delft3d.version>
-       <PreProcessing.version>",Meta.Data$Build.Input.File.R.Version,"</PreProcessing.version>
-       <PostProcessing.version>",Meta.Data$Build.Input.File.R.Version,"</PostProcessing.version>
+       <version>",Meta.Data$Build.Input.File.R.Version,"</version>
+       <delft3d.version>",Meta.Data$Delft3d.Version,"<Delft3d.version>
+       <preprocessing.version>",Meta.Data$Build.Input.File.R.Version,"</preprocessing.version>
+       <postprocessing.version>",Meta.Data$Build.Input.File.R.Version,"</postprocessing.version>
        <visit>",Meta.Data$VisitID,"</visit>
        <operator>",Meta.Data$Operator,"</operator>
        <year>",Meta.Data$Year,"</year>
@@ -610,14 +613,14 @@ cat(paste("?xml version=\"1.0\" encoding=\"utf-8\"?>
             <modeled_discharge>",Meta.Data$Discharge,"</modeled_discharge>
             <downstream_boundary>",Meta.Data$Exit_BC,"</downstream_boundary>
             <trim_length>",Meta.Data$TrimLength,"</trim_length>
-            <HEV>",Meta.Data$HEV,"</HEV>
+            <hev>",Meta.Data$HEV,"</hev>
             <left_reference>",Meta.Data$Left.Reference,"</left_reference>
             <top_reference>",Meta.Data$Top.Reference,"<top_reference>
             <computational_grid_spacing>",Meta.Data$Comp.Grid.Spacing,"</computational_grid_spacing>
        </data> 
 </model_results>
 ",sep=""),
-file= paste(sub.folder,"reference.xml"))
+file= paste(sub.folder,"summary.xml"),append=T)
 ##############################################################
 
 

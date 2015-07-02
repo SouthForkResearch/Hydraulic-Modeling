@@ -1275,7 +1275,7 @@ file= "test.xml")
 names(site.list)
 meta.data = list(
 "VisitID"=site.list$VisitID[k],
-"D84"=site.list$D84,
+"D84"=site.list$D84[k],
 "Roughness Input" = Ccofu,
 "HEV" = HEV,
 "TrimLength"=slop,
