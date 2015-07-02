@@ -1289,6 +1289,7 @@ meta.data = list(
 "Comp.Grid.Spacing" = DX,
 "Build.Input.File.R.Version" = Build.Input.File.R.Version,
 "Delft3D.Version" = Delft3D.Version,
+"Operator" = Operator,
 "Pre.Processing.Date.Time" = Sys.time()
 )
 

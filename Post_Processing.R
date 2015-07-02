@@ -599,7 +599,7 @@ cat(paste("?xml version=\"1.0\" encoding=\"utf-8\"?>
        <model>delft3D<model>
        <run_datetime>",Meta.Data$Post.Processing.Date.Time,"</run_datetime>
        <version>",Meta.Data$Build.Input.File.R.Version,"</version>
-       <delft3d.version>",Meta.Data$Delft3d.Version,"<Delft3d.version>
+       <delft3d.version>",Meta.Data$Delft3D.Version,"<delft3d.version>
        <preprocessing.version>",Meta.Data$Build.Input.File.R.Version,"</preprocessing.version>
        <postprocessing.version>",Meta.Data$Build.Input.File.R.Version,"</postprocessing.version>
        <visit>",Meta.Data$VisitID,"</visit>
@@ -619,8 +619,7 @@ cat(paste("?xml version=\"1.0\" encoding=\"utf-8\"?>
             <computational_grid_spacing>",Meta.Data$Comp.Grid.Spacing,"</computational_grid_spacing>
        </data> 
 </model_results>
-",sep=""),
-file= paste(sub.folder,"summary.xml"),append=T)
+",sep=""),file= paste(sub.folder,"summary.xml"),append=T)
 ##############################################################
 
 
