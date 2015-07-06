@@ -599,9 +599,9 @@ cat(paste("?xml version=\"1.0\" encoding=\"utf-8\"?>
        <model>delft3D<model>
        <run_datetime>",Meta.Data$Post.Processing.Date.Time,"</run_datetime>
        <version>",Meta.Data$Build.Input.File.R.Version,"</version>
-       <delft3d.version>",Meta.Data$Delft3D.Version,"<delft3d.version>
-       <preprocessing.version>",Meta.Data$Build.Input.File.R.Version,"</preprocessing.version>
-       <postprocessing.version>",Meta.Data$Build.Input.File.R.Version,"</postprocessing.version>
+       <delft3d_version>",Meta.Data$Delft3D.Version,"<delft3d_version>
+       <preprocessing_version>",Meta.Data$Build.Input.File.R.Version,"</preprocessing_version>
+       <postprocessing_version>",Meta.Data$Build.Input.File.R.Version,"</postprocessing_version>
        <visit>",Meta.Data$VisitID,"</visit>
        <operator>",Meta.Data$Operator,"</operator>
        <year>",Meta.Data$Year,"</year>
