@@ -190,6 +190,12 @@ options(digits=12)
 
 # Read the DEM into data`.frame "data"
 data =read.csv("DEM.csv", header=F)
+
+# Re-read if data has headers (i.e. new format from Matt R's C++ code)
+if (is.numeric(data[,1])==F){
+data= read.csv("DEM.csv", header=T)}
+
+
 names(data) = c("X", "Y", "grid_code")
 ref.left = min(data$X)-.05
 ref.top = max(data$Y)+.05
@@ -216,6 +222,12 @@ names(data)
 names(data)
 # Read teh WSEDEM into data.frame "WSEDEM"
 WSEDEM = read.csv("WSEDEM.csv", header=F)
+
+# Re-read if data has headers (i.e. new format from Matt R's C++ code)
+if (is.numeric(WSEDEM[,1])==F)
+{WSEDEM= read.csv("WSEDEM.csv", header=T)}
+
+
 names(WSEDEM) = c("ws.X", "ws.Y", "ws.Z")
 
 #max(WSEDEM$ws.Z)
@@ -301,6 +313,11 @@ minY = min(Ylist)
 
 # REad the thalweg
 thalweg = read.csv("Thalweg.csv", header=F)
+
+# Re-read if data has headers (i.e. new format from Matt R's C++ code)
+if (is.numeric(thalweg[,1])==F){
+thalweg= read.csv("DEM.csv", header=T)}
+names(thalweg)
 names(thalweg) = c("thalwagX", "thalwagY")
 
 ## plot the thalweg
