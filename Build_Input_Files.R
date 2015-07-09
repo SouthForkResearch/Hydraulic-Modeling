@@ -316,7 +316,7 @@ thalweg = read.csv("Thalweg.csv", header=F)
 
 # Re-read if data has headers (i.e. new format from Matt R's C++ code)
 if (is.numeric(thalweg[,1])==F){
-thalweg= read.csv("DEM.csv", header=T)}
+thalweg= read.csv("Thalweg.csv", header=T)}
 names(thalweg)
 names(thalweg) = c("thalwagX", "thalwagY")
 
