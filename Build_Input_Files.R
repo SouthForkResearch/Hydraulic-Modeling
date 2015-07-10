@@ -240,7 +240,7 @@ WSEDEM = WSEDEM[WSEDEM$ws.Z > -9999,]
 #nrow(WSEDEM2)
 
 # Discharge is flow rate in cubic m/s
-discharge = site.list$Discharge[k]
+discharge = site.list$Modeled.Discharge[k]
 
 # slop defines how much of the DEM grid is going to be trimmed off to ensure
 # our inlet and outlet boundaries fall along one face (East, North, West, or South) of the
@@ -552,6 +552,7 @@ WSvec = WSvec - max(GZvec)
 WS.Z = matrix(WSvec, c(NX, NY))
 
 
+
 ###########################################################
 # Do some graphing to check things out.  
 # Plot Bathymetry
@@ -715,7 +716,7 @@ if (outlet=="east") {
 
 # find nearest boundary point to outlet
 idx= nn2(cbind(GridX[NX,], GridY[NX,]),thalweg.g[nrow(thalweg.g),],1)$nn.idx
-idx
+
  outflow.y.idx.b = idx- match(T, (depth[NX, idx:1] == 0))+4
  outflow.y.idx.t =  idx+ match(T, (depth[NX, idx:NY] == 0))-4
 
@@ -783,15 +784,117 @@ outflow.idx = nn2(
         GridY[outflow.x.idx[1]:outflow.x.idx[2], outflow.y.idx[1]:outflow.y.idx[2]])),1)
 
 outflow.ws.level = mean(WSEDEM[outflow.idx$nn.idx[outflow.idx$nn.dists < .11],3])-max(GridZ)
-outflow.ws.level
-# Old way... wrong and generally too low....l
-# outflow.ws.level = thalwegZ[length(thalwegZ)]-max(GridZ)
 
+dim(WSEDEM)
+dim(GridZ)
+
+outflow.ws.level
+##########################
+### HERE!!!!
+# outlet.width is the wetted width at the exit, to be used in conjunction with Manning's 
+# equation and a 1-D simplifying assumption of rectangular open channel flow to come up
+# with downstream boundary condition at unmeasured discharge values.
+
+X.outlet=(WSEDEM[outflow.idx$nn.idx[outflow.idx$nn.dists < .11],1])
+Y.outlet=(WSEDEM[outflow.idx$nn.idx[outflow.idx$nn.dists < .11],2])
+Z.idx = nn2(data[,1:2], data.frame(X.outlet, Y.outlet),1)[1]
+outlet.dep = outflow.ws.level-(data[Z.idx$nn.idx,3]-max(GridZ))
+length(outlet.dep)
+
+W = length((WSEDEM[outflow.idx$nn.idx[outflow.idx$nn.dists < .11],3])-max(GridZ))*DX
+D1 = mean(outlet.dep)
+# Need
+Q1=site.list$Measured.Discharge[k]
+Q2=site.list$Modeled.Discharge[k]
+# Solve for D2
+
+
+####################################
+# Iterative solution to Manning's equation to get new depth estimate at modeled discharge,
+# Assuming 1-D open channel flow in rectangular basin.  Not a great estimate, but we need
+# Something, and we've shown we're fairly insensitive to bad BC at exit.
+
+# Here's the function for manning Q1/Q2, assuming |____| shaped
+# channel, where W is constant, D1 is known, Q1 and Q2 are known, and
+# we want D2
+###
+A = function(D1, D2, W) {
+Ratio = D1/D2 * ((2*D1+W)/(2*D2+W))^(2/3)
+return(Ratio)}
+###
+
+# Here's the known ratio of measured (Q1) to modeled (Q2)
+Actual.Ratio = Q1/Q2
+
+# Starting Guess (D2.Guess set high so we definitely enter while loop
+D2.Guess = 9999
+D2.Guess.New = D1
+
+
+# Iterate until our guess for D2 gives us the right ratio within .001
+while ((abs(D2.Guess.New-D2.Guess)) > .001) {
+D2.Guess = D2.Guess.New
+#print(D2.Guess)
+Ratio = A(D1, D2.Guess, W)
+#print(Ratio)
+Actual.Ratio
+
+D2.Guess
+D2.Guess.offset =  D2.Guess * Ratio/Actual.Ratio-D2.Guess
+D2.Guess.offset
+# The 0.1 forces us to creep up slowly, for stability's sake
+D2.Guess.New = D2.Guess + .1*D2.Guess.offset
+}
+###################################
+D2 = D2.Guess.New
+
+
+########################
+
+###############################
+# Alternate: Adjust exit boundary condition by scaling exit depth to discharge change
+# Assuming no velocity change.  This should be the maximum allowable change; in theory
+# the above method could violate this for very non-rectangular channels.
+ DisMult = Q2/Q1
+outflow.idx
+# Find output points
+adjust.idx = nn2(
+  data[,1:2],data.frame(cbind(GridX[
+      outflow.x.idx[1]:outflow.x.idx[2],outflow.y.idx[1]:outflow.y.idx[2]],
+        GridY[outflow.x.idx[1]:outflow.x.idx[2], outflow.y.idx[1]:outflow.y.idx[2]])),1)
+
+depth.adjust=WSEDEM[outflow.idx$nn.idx,3]-data[adjust.idx$nn.idx,3]
+val = DisMult* sum(depth.adjust[depth.adjust > 0])
+cor = seq(-10,10, by=.01)
+cor.idx = 1:(length(cor))
+val.try = rep(0, length(cor))
+c = cor[1]
+for (c in 1:length(cor)){
+val.try[c] = abs(sum((depth.adjust+cor[c])[((depth.adjust+cor[c])>0)])- val)
+}
+correction=cor[cor.idx[val.try == min(val.try)]]
+correction
+D2.max = D1+correction
+D2.max
+Q1
+Q2
+D1
+D2
+D2.max
+if (Q2 > Q1) {D2 = min(D2, D2.max)}
+if (Q2 <= Q1) {D2 = max(D2, D2.max)}
+
+
+###################################################
+########################
+# Here's where we adjust the exit WS level
+outflow.ws.level = outflow.ws.level + (D2-D1)
+outflow.ws.level
+
+###########################
 
 ### Here's my outflow boundary condition ##################
-outflow.x.idx
-outflow.y.idx
-outflow.ws.level
+
 
 #write file "test.bnd"
 cat("outflow             ","Z","T", outflow.x.idx[1], outflow.y.idx[1],
@@ -1297,7 +1400,7 @@ meta.data = list(
 "HEV" = HEV,
 "TrimLength"=slop,
 "Discharge" = discharge, #modeled discharge
-"Measured_Discharge" = site.list$Discharge[k],
+"Measured_Discharge" = site.list$Measured.Discharge[k],
 "Year"=site.list$Year[k],
 "WatershedName"=site.list$WatershedName[k],
 "Exit_BC"=outflow.ws.level,
