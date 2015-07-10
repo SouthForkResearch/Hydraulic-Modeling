@@ -100,8 +100,13 @@ Meta.Data$Post.Processcing.R.Code.Version = Post.Processcing.R.Code.Version
 Meta.Data$Post.Processing.Date.Time = Sys.time()
 
 
-# Read the DEM
+# Rea d the DEM
 data =read.csv("DEM.csv", header=F)
+
+# Re-read if data has headers (i.e. new format from Matt R's C++ code)
+if (is.numeric(data[,1])==F){
+data= read.csv("DEM.csv", header=T)}
+
 names(data) = c("X", "Y", "grid_code")
 
 min(data$grid_code)
@@ -111,8 +116,12 @@ print(paste(site.list$VisitID[k], site.list$SiteID[k], min(data$grid_code[data$g
 
 # Read the WSEDEM
 WSEDEM = read.csv("WSEDEM.csv", header=F)
-WSEDEM= WSEDEM[WSEDEM[,3] > -9999,]
 
+# Re-read if data has headers (i.e. new format from Matt R's C++ code)
+if (is.numeric(WSEDEM[,1])==F)
+{WSEDEM= read.csv("WSEDEM.csv", header=T)}
+
+WSEDEM= WSEDEM[WSEDEM[,3] > -9999,]
 
 
 options(digits=12)
