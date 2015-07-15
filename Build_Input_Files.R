@@ -12,11 +12,11 @@ Operator = "Matt Nahorniak"
 
 setwd( "C:/Matt-SFR Files/Hydraulic Modeling/R Code to Build Input Files")
 
-results.folder = "c:/Matt-SFR Files/Hydraulic Modeling/Delft3D Results Files/"
-QA.folder = "c:/Matt-SFR Files/Hydraulic Modeling/Delft3D QA Files/"
+#results.folder = "c:/Matt-SFR Files/Hydraulic Modeling/Delft3D Results Files/"
+#QA.folder = "c:/Matt-SFR Files/Hydraulic Modeling/Delft3D QA Files/"
 
 
-dir.create(QA.folder)
+#dir.create(QA.folder)
 
 
 savedwd = getwd()
@@ -61,6 +61,101 @@ site.list=read.csv("CFD_Site_List.csv")
 
 names(site.list)
 
+
+
+######################################
+# Create directories where Delft3D input files are to be stored and
+# where results are to be stored.
+# This is needed since we may run multiple discharge variants from the same
+# DEM, WSEDEM, and thalweg data files
+
+site.list$D3D.Input.Folder = rep("", nrow(site.list))
+Variant = rep("", nrow(site.list))
+k=1
+for (k in 1:nrow(site.list)){
+
+# Need a "variant string" 6 characters long, plus one for the leading letter.
+Variant.str = as.character(signif(round(site.list$Modeled.Discharge[k],4),4))
+lead.zeroes =rep("0", 6-nchar(Variant.str))
+lead.zeroes = paste(lead.zeroes, collapse="", sep="")
+Variant.str = paste(lead.zeroes, Variant.str,"/", sep="")
+
+Variant.str
+Variant.str=gsub(".", "_", Variant.str, fixed=T)
+Variant.str=paste("000", Variant.str, sep="")
+Variant[k] = Variant.str
+Variant
+if (site.list$Measured.Discharge[k] == site.list$Modeled.Discharge[k]){
+site.list$D3D.Input.Folder[k]=paste(site.list$Directory[k],"S", Variant.str, sep="")} else{
+site.list$D3D.Input.Folder[k]=paste(site.list$Directory[k],"M", Variant.str, sep="")} 
+dir.create(site.list$D3D.Input.Folder[k])
+
+}
+
+site.list$D3D.Input.Folder
+
+names(site.list)
+
+for (k in 1:nrow(site.list)) { 
+if (site.list$Measured.Discharge[k] == site.list$Modeled.Discharge[k]){
+  Variant[k] = paste("S", Variant[k], sep="")} else {
+  Variant[k] = paste("M", Variant[k], sep="")}
+}
+
+
+site.list$Results.Folder = 
+  paste("c://Matt-SFR Files/Hydraulic Modeling/champ data from bucket/",
+         site.list$Year,"/",site.list$WatershedName,"/",
+         site.list$SiteID,"/VISIT_",
+         site.list$VisitID,"/", "Hydro/Results/",Variant, sep="")
+
+Variant
+site.list$Results.Folder
+
+for (k in 1:nrow(site.list)){
+
+# Should I have spaces or not?
+
+  dir.create (paste("c://Matt-SFR Files/Hydraulic Modeling/champ data from bucket/",
+         site.list$Year, sep="")[k])
+
+  dir.create (paste("c://Matt-SFR Files/Hydraulic Modeling/champ data from bucket/",
+         site.list$Year,"/",site.list$WatershedName, sep="")[k])
+
+  dir.create (paste("c://Matt-SFR Files/Hydraulic Modeling/champ data from bucket/",
+         site.list$Year,"/",site.list$WatershedName,
+         "/",site.list$SiteID,sep="")[k])
+
+  dir.create (paste("c://Matt-SFR Files/Hydraulic Modeling/champ data from bucket/",
+         site.list$Year,"/",site.list$WatershedName,
+         "/",site.list$SiteID,"/VISIT_",
+         site.list$VisitID, sep="")[k])
+
+  dir.create (paste("c://Matt-SFR Files/Hydraulic Modeling/champ data from bucket/",
+         site.list$Year,"/",site.list$WatershedName,
+         "/",site.list$SiteID,"/VISIT_",
+         site.list$VisitID,"/", "Hydro/", sep="")[k])
+
+  dir.create( paste("c://Matt-SFR Files/Hydraulic Modeling/champ data from bucket/",
+         site.list$Year,"/",site.list$WatershedName,"/",site.list$SiteID,
+         "/VISIT_",
+         site.list$VisitID,"/", "Hydro/Results", sep="")[k])
+
+  dir.create( paste("c://Matt-SFR Files/Hydraulic Modeling/champ data from bucket/",
+         site.list$Year,"/",site.list$WatershedName,"/",site.list$SiteID,
+         "/VISIT_",
+         site.list$VisitID,"/", "Hydro/Results/",Variant, sep="")[k])
+
+
+}
+
+site.list$Results.Folder
+#############
+
+}
+
+names(site.list)
+
 # Create an index to match the directory structure, as read by R, and the site list from 
 # the "CFD_Site_List.csv" file, so we can match directories and sites correctly.  Note the
 # elements in site.list$SiteID must match directory names exactly.
@@ -87,11 +182,12 @@ cat("", file = "quickplot_macro.m")
 # Note that this will build input files for ALL sites in the specified directory.  To run just
 # a subset of sites, comment out the "for (k in site.index) {" line and re-rewite it to inly
 # run the index list you want to run.  
-
+names(site.list)
 k  = site.index[1]
 for (k in site.index) {
 #for (k in c(87)){
-WorkingDir = as.character(site.list$Directory[k])
+WorkingDir = as.character(site.list$D3D.Input.Folder[k])
+
 
 # Set the working directory
 #wd = paste(WorkingDir,"/", as.character(site.list$SiteID[k]),"/",sep="")
@@ -133,8 +229,6 @@ append=T)
 ###########################################################################################
 # Loop through sites to build batch file to run all simulations in batch mode
 pathname = "path C:\\Matt-SFR Files\\Delft3D\\Delft3D_Updated\\delft3d_ohmw_4.01.00.rc.02\\delft3d\\win32\\flow2d3d\\bin\n"
-pathname 
-cat(pathname)
 
 cat(pathname, file = "batchprocess.bat")
 k
@@ -142,7 +236,7 @@ k=1
 
 for (k in site.index) {
 #for (k in c(87)){
-WorkingDir = as.character(site.list$Directory[k])
+WorkingDir = as.character(site.list$D3D.Input.Folder[k])
 WorkingDir
 # Set the working directory
 #wd = paste(WorkingDir,"/", as.character(site.list$SiteID[k]),sep="")
@@ -338,6 +432,12 @@ if (mean(thalwegZ[1:10] ) < mean(thalwegZ[length(thalwegZ)-10]:thalwegZ[length(t
 thalweg = thalweg[nrow(thalweg):1,]
 thalwegZ = thalwegZ[length(thalwegZ):1]
 }
+
+
+### Here!!!!##
+# Move to the folder where I'm going to write D3D input files
+setwd(site.list$D3D.Input.Folder[k])
+##############
 
 # write the updated thalweg to a file for use in post-processing.
 write.csv(thalweg, "updated_thalweg.csv")
@@ -566,30 +666,23 @@ max(depth)
 color = colorp[round(depth/max(depth)*48)+1]
 color[depth == 0] = "white"
 
-dir()
-savedwd
-site.list$SiteID[k]
-site.list$Year
 
-results.folder
-site.list$VisitID[k]
-#sub.folder = paste(results.folder,site.list$SiteID[k],"_",
-#    site.list$Year[k],"_VisitID_",site.list$VisitID[k],"/",sep="")
 
-sub.folder = site.list$Directory[k]
-sub.folder = gsub("HydroModelInputs/artifacts/","",sub.folder)
-sub.folder = paste(sub.folder, "HydroModelResults/", sep="")
+sub.folder=site.list$Results.Folder[k]
 sub.folder
+#dir.create(gsub("Inputs", "Variants",site.list$Directory[k]))
+#sub.folder
+#dir.create(sub.folder)
 
-sub.folder
-dir.create(sub.folder)
 QA.folder = sub.folder
+
+
 # QA plots used to go in separate folder.  Now sticking them here to be consistent
 # with output on cm.org.
 #paste(sub.folder,"QA Plots/", sep="")
 #QA.folder
-dir.create(QA.folder)
-
+#dir.create(QA.folder)
+#dir(QA.folder)
 
 
 #jpeg(paste(QA.folder,"Bathymetry_",site.list$SiteID[k],site.list$Year[k],".jpg",sep=""), 6,6, units='in', res=600)
@@ -892,6 +985,9 @@ outflow.ws.level = outflow.ws.level + (D2-D1)
 outflow.ws.level
 
 ###########################
+
+
+
 
 ### Here's my outflow boundary condition ##################
 
@@ -1413,8 +1509,8 @@ meta.data = list(
 "Pre.Processing.Date.Time" = Sys.time()
 )
 
-
-write.csv(meta.data,paste(WorkingDir,"/Meta.Data.csv", sep=""))
+names(site.list)
+write.csv(meta.data,paste(site.list$D3D.Input.Folder[k],"/Meta.Data.csv", sep=""))
 
 
 WorkingDir

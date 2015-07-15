@@ -60,6 +60,10 @@ CFD_SiteList = data.frame(
 "Trim Length" = rep(10, length(idx)),
 "HEV" = rep(.01, length(idx)))
 
+#Remove spaces from SiteID
+CFD_SiteList$SiteID = gsub(" ","", CFD_SiteList$SiteID)
+CFD_SiteList$WatershedName = gsub(" ","", CFD_SiteList$WatershedName)
+
 CFD_SiteList
 
 write.csv(CFD_SiteList,"CFD_Site_List.csv")

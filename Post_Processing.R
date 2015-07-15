@@ -9,8 +9,8 @@ Post.Processcing.R.Code.Version = 1.0
 #memory.limit(16194)
 
 
-results.folder = "c:/Matt-SFR Files/Hydraulic Modeling/Delft3D Results Files/"
-QA.folder = "c:/Matt-SFR Files/Hydraulic Modeling/Delft3D QA Files/"
+#results.folder = "c:/Matt-SFR Files/Hydraulic Modeling/Delft3D Results Files/"
+#QA.folder = "c:/Matt-SFR Files/Hydraulic Modeling/Delft3D QA Files/"
 
 # Set this so scientific notation is not used when writing output files
 options(scipen=10)
@@ -62,6 +62,62 @@ colorp= colorRampPalette(c("dark blue","blue","cyan","green","yellow","orange", 
 #setwd("c:/Matt-SFR Files/Hydraulic Modeling Backup/Hydraulic Modeling")
 site.list=read.csv("CFD_Site_List.csv")
 
+
+#################
+# Re-Create directory where Delft3D results files are  stored
+# This is needed since we may run multiple discharge variants from the same
+# DEM, WSEDEM, and thalweg data files
+# Duplicate code from Build_Input_Files.R
+
+
+site.list$D3D.Input.Folder = rep("", nrow(site.list))
+Variant = rep("", nrow(site.list))
+k=1
+for (k in 1:nrow(site.list)){
+
+# Need a "variant string" 6 characters long, plus one for the leading letter.
+Variant.str = as.character(signif(round(site.list$Modeled.Discharge[k],4),4))
+lead.zeroes =rep("0", 6-nchar(Variant.str))
+lead.zeroes = paste(lead.zeroes, collapse="", sep="")
+Variant.str = paste(lead.zeroes, Variant.str,"/", sep="")
+
+Variant.str
+Variant.str=gsub(".", "_", Variant.str, fixed=T)
+Variant.str=paste("000", Variant.str, sep="")
+Variant[k] = Variant.str
+
+if (site.list$Measured.Discharge[k] == site.list$Modeled.Discharge[k]){
+site.list$D3D.Input.Folder[k]=paste(site.list$Directory[k],"S", Variant.str, sep="")} else{
+site.list$D3D.Input.Folder[k]=paste(site.list$Directory[k],"M", Variant.str, sep="")} 
+dir.create(site.list$D3D.Input.Folder[k])
+
+}
+
+site.list$D3D.Input.Folder
+names(site.list)
+
+for (k in 1:nrow(site.list)) { 
+if (site.list$Measured.Discharge[k] == site.list$Modeled.Discharge[k]){
+  Variant[k] = paste("S", Variant[k], sep="")} else {
+  Variant[k] = paste("M", Variant[k], sep="")}
+}
+
+site.list$Results.Folder = 
+  paste("c://Matt-SFR Files/Hydraulic Modeling/champ data from bucket/",
+         site.list$Year,"/",site.list$WatershedName,"/",
+         site.list$SiteID,"/VISIT_",
+         site.list$VisitID,"/", "Hydro/Results/",Variant, sep="")
+
+
+
+##################
+#################
+
+
+
+
+
+
 #dir("c:/Matt-SFR Files/Hydraulic Modeling Backup/Hydraulic Modeling//")
 # match sites in dite_list file to sites in directory
 #site.index = match(dir(WorkingDir),site.list$SiteID)
@@ -87,9 +143,7 @@ print(paste("k=",k))
 # Move into directory for current site to post-process
 
 # Set the working directory
-WorkingDir = as.character(site.list$Directory[k])
-
-#setwd(paste(WorkingDir, "/",as.character(site.list$SiteID[k]), sep=""))
+WorkingDir = as.character(site.list$D3D.Input.Folder[k])
 setwd(paste(WorkingDir, "/", sep=""))
 
 dir()
@@ -99,9 +153,15 @@ Meta.Data = read.csv(paste(WorkingDir,"/Meta.Data.csv", sep=""))
 Meta.Data$Post.Processcing.R.Code.Version = Post.Processcing.R.Code.Version
 Meta.Data$Post.Processing.Date.Time = Sys.time()
 
+names(site.list)
+# Read the DEM
+# Set the working directory
+WorkingDir = as.character(site.list$Directory[k])
+WorkingDir
+setwd(paste(WorkingDir, "/", sep=""))
 
-# Rea d the DEM
 data =read.csv("DEM.csv", header=F)
+
 
 # Re-read if data has headers (i.e. new format from Matt R's C++ code)
 if (is.numeric(data[,1])==F){
@@ -125,6 +185,10 @@ WSEDEM= WSEDEM[WSEDEM[,3] > -9999,]
 
 
 options(digits=12)
+
+# Set the working directory back to where the Delft3D results are stored.
+WorkingDir = as.character(site.list$D3D.Input.Folder[k])
+setwd(paste(WorkingDir, "/", sep=""))
 
 # Read the velocity outputs
 dataVel = read.table("depth averaged velocity.xyz", header=T)
@@ -185,6 +249,13 @@ dataBedShear$Y =dataBedShear$Y + offset$Y.offset
 
 nrow(dataDepth)
 nrow(dataWaterLevel)
+
+###################################################
+# Now move to the output folder
+
+
+setwd(site.list$Results.Folder[k])
+
 
 ###################################################################
 #
@@ -339,6 +410,7 @@ gc()
 
 # Write results file.  This file contains one row for
 # each points on the computational Grid.  Can be a BIG file.
+
 
 #dir.create(paste(savedwd,"/",results.folder,"/",site.list$SiteID[k],"_Delft3D_Results.csv", sep=""),
 #showWarnings=F)
@@ -579,15 +651,20 @@ DEM.Results = DEM.Results[DEM.Results$BedLevel > -9999,]
 #sub.folder = paste(results.folder,site.list$SiteID[k],"_",
 #    site.list$Year[k],"_VisitID_",site.list$VisitID[k],"/",sep="")
 
-sub.folder = site.list$Directory[k]
-sub.folder = gsub("HydroModelInputs/artifacts/","",sub.folder)
-sub.folder = paste(sub.folder, "HydroModelResults/", sep="")
+#sub.folder = site.list$Directory[k]
+#sub.folder = gsub("HydroModelInputs/artifacts/","",sub.folder)
+#sub.folder = paste(sub.folder, "HydroModelResults/", sep="")
+
+sub.folder = site.list$Results.Folder[k]
 sub.folder
+
 
 dir.create(sub.folder)
 
 #write.csv(DEM.Results, paste(sub.folder,"DEM_GRID_",
 #   site.list$SiteID[k],"_",site.list$Year[k],"VisitID_",site.list$VisitID[k],"_Delft3D_Results.csv", sep=""), row.names=F)
+
+
 write.csv(DEM.Results, paste(sub.folder,"dem_grid_results.csv",sep=""), row.names=F)
 
 
@@ -603,6 +680,10 @@ names(Meta.Data)
 cat("", file= paste(sub.folder,"summary.xml"))
 Meta.Data
 
+names(site.list)
+surv_dish = site.list$Measured.Discharge[k] == site.list$Modeled.Discharge[k]
+surv_dish
+
 cat(paste("?xml version=\"1.0\" encoding=\"utf-8\"?>
 <model_results>
        <model>delft3D<model>
@@ -615,6 +696,8 @@ cat(paste("?xml version=\"1.0\" encoding=\"utf-8\"?>
        <operator>",Meta.Data$Operator,"</operator>
        <year>",Meta.Data$Year,"</year>
        <watershed>",Meta.Data$WatershedName,"</watershed>
+       <run_type>","NA","</run_type>
+       <surveyed_discharge>", surv_dish, "</surveyed_discharge>
        <data>
             <d84>",Meta.Data$D84,"</d84>
             <surface_roughness>",Meta.Data$Roughness.Input,"</surface_roughness>
