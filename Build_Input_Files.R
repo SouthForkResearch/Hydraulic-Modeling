@@ -882,6 +882,15 @@ dim(WSEDEM)
 dim(GridZ)
 
 outflow.ws.level
+
+## 7_23_15 Change
+## Not adjusting outflow BC ##
+## We found that this drastically over-corrected exit boundary condition
+## and, likely, caused more error than it reduced.  Better to just leave this
+## BC as is, as it likely communicates upstream to a lesser distance than
+## adjusting it too much, especially when modeling at flows significantly higher
+## than measured.  Still work to do on this front.
+if (1==2) {
 ##########################
 ### HERE!!!!
 # outlet.width is the wetted width at the exit, to be used in conjunction with Manning's 
@@ -985,7 +994,7 @@ outflow.ws.level = outflow.ws.level + (D2-D1)
 outflow.ws.level
 
 ###########################
-
+}# End of "if 1==2" to avoid doing any of the above BC adjustments.  
 
 
 
