@@ -248,7 +248,9 @@ cat("
 d_hydro test.xml
 ", file = "batchprocess.bat",append=T)
 }
-cat("pause", file = "batchprocess.bat", append=T)
+# set batchfile to automatically shutdown to avoid leaving
+# on AWS server instance when job finished.
+cat("shutdown -f", file = "batchprocess.bat", append=T)
 
 
 
