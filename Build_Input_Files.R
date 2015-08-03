@@ -250,7 +250,7 @@ d_hydro test.xml
 }
 # set batchfile to automatically shutdown to avoid leaving
 # on AWS server instance when job finished.
-cat("cd c:\Users\Administrator
+cat("cd c:\\Users\\Administrator
 ", file = "batchprocess.bat", append=T)
 cat("shutdown -f", file = "batchprocess.bat", append=T)
 
