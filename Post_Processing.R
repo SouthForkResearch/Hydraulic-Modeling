@@ -684,7 +684,7 @@ names(site.list)
 surv_dish = site.list$Measured.Discharge[k] == site.list$Modeled.Discharge[k]
 surv_dish
 
-cat(paste("?xml version=\"1.0\" encoding=\"utf-8\"?>
+cat(paste("<?xml version=\"1.0\" encoding=\"utf-8\"?>
 <model_results>
        <model>delft3D<model>
        <run_datetime>",Meta.Data$Post.Processing.Date.Time,"</run_datetime>
