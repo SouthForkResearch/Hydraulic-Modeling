@@ -686,10 +686,10 @@ surv_dish
 
 cat(paste("<?xml version=\"1.0\" encoding=\"utf-8\"?>
 <model_results>
-       <model>delft3D<model>
+       <model>delft3D</model>
        <run_datetime>",Meta.Data$Post.Processing.Date.Time,"</run_datetime>
        <version>",Meta.Data$Build.Input.File.R.Version,"</version>
-       <delft3d_version>",Meta.Data$Delft3D.Version,"<delft3d_version>
+       <delft3d_version>",Meta.Data$Delft3D.Version,"</delft3d_version>
        <preprocessing_version>",Meta.Data$Build.Input.File.R.Version,"</preprocessing_version>
        <postprocessing_version>",Meta.Data$Build.Input.File.R.Version,"</postprocessing_version>
        <visit>",Meta.Data$VisitID,"</visit>
@@ -707,7 +707,7 @@ cat(paste("<?xml version=\"1.0\" encoding=\"utf-8\"?>
             <trim_length>",Meta.Data$TrimLength,"</trim_length>
             <hev>",Meta.Data$HEV,"</hev>
             <left_reference>",Meta.Data$Left.Reference,"</left_reference>
-            <top_reference>",Meta.Data$Top.Reference,"<top_reference>
+            <top_reference>",Meta.Data$Top.Reference,"</top_reference>
             <computational_grid_spacing>",Meta.Data$Comp.Grid.Spacing,"</computational_grid_spacing>
        </data> 
 </model_results>
