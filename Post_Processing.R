@@ -711,7 +711,7 @@ cat(paste("<?xml version=\"1.0\" encoding=\"utf-8\"?>
             <computational_grid_spacing>",Meta.Data$Comp.Grid.Spacing,"</computational_grid_spacing>
        </data> 
 </model_results>
-",sep=""),file= paste(sub.folder,"summary.xml"),append=T)
+",sep=""),file= paste(sub.folder,"summary.xml",sep=""),append=T)
 ##############################################################
 
 
