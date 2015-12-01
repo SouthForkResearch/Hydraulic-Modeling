@@ -677,7 +677,7 @@ names(Meta.Data)
 # Write the xml output file here!
 
 #print(paste("k=",k,sub.folder))
-cat("", file= paste(sub.folder,"summary.xml"))
+cat("", file= paste(sub.folder,"summary.xml",sep=""))
 Meta.Data
 
 names(site.list)
