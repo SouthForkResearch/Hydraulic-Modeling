@@ -746,7 +746,9 @@ VOL = sum(Wdepth)*DX*DX
 print("VOL")
 print(VOL)
 
-Min.Sim.sec = VOL/discharge # time to fill volume, based on discharge, in seconds
+# Adjusted this line to ensure sufficient "fill" when we're running at higher discharges,
+# which will require higher volume to fill.  It's a swag but should work.
+Min.Sim.sec = VOL/discharge * sqrt(discharge/site.list$Measured.Discharge) # time to fill volume, based on discharge, in seconds
 simtime = max(10, round(Min.Sim.sec / 60 * 2))
 
 
@@ -881,6 +883,10 @@ outflow.idx = nn2(
         GridY[outflow.x.idx[1]:outflow.x.idx[2], outflow.y.idx[1]:outflow.y.idx[2]])),1)
 
 outflow.ws.level = mean(WSEDEM[outflow.idx$nn.idx[outflow.idx$nn.dists < .11],3])-max(GridZ)
+
+# This is used ONLY is we add a DeltaBC to the cfd.site.list file, which we might do if
+# we're running on non-default flows and we've got some info on the change in depth.
+outflow.ws.level = outflow.ws.level + site.list$DeltaBC[k]
 
 dim(WSEDEM)
 dim(GridZ)

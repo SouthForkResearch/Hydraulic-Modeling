@@ -58,7 +58,8 @@ CFD_SiteList = data.frame(
 "WatershedName"=MVI$WatershedName[idx],
 "VisitID" = VisitIDs,
 "Trim Length" = rep(10, length(idx)),
-"HEV" = rep(.01, length(idx)))
+"HEV" = rep(.01, length(idx)),
+"DeltaBC" = rep(0, length(idx)))
 
 #Remove spaces from SiteID
 CFD_SiteList$SiteID = gsub(" ","", CFD_SiteList$SiteID)
