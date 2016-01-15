@@ -690,6 +690,7 @@ cat(paste("<?xml version=\"1.0\" encoding=\"utf-8\"?>
        <run_datetime>",Meta.Data$Post.Processing.Date.Time,"</run_datetime>
        <version>",Meta.Data$Build.Input.File.R.Version,"</version>
        <delft3d_version>",Meta.Data$Delft3D.Version,"</delft3d_version>
+       <rbt_version>",Meta.Data$rbt.version,"</rbt_version>
        <preprocessing_version>",Meta.Data$Build.Input.File.R.Version,"</preprocessing_version>
        <postprocessing_version>",Meta.Data$Build.Input.File.R.Version,"</postprocessing_version>
        <visit>",Meta.Data$VisitID,"</visit>

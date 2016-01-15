@@ -41,7 +41,7 @@ savedwd = getwd()
 #windows(record=T)
 
 library(RANN) # library for nearest neighbor search routine.  Very useful!!!
-
+library(XML) # read input xml file to get rbt_version
 
 # Set Some Hard Coded Numerical Parameters for CFD Solution.  Others are read from .csv file.
   # Hard Coded Time Step used in Delft 3D (to be used later)
@@ -285,6 +285,26 @@ setwd(WorkingDir)
 
 # Need lots of digits!
 options(digits=12)
+
+#########################
+## read in the xmlfile "hydro_prep_log.xml" and find the RBT version
+ 
+rbt.version = "unknown"
+if ("hydro_prep_log.xml" %in% dir()){
+
+xmlfile = xmlParse("hydro_prep_log.xml")
+
+xmltop = xmlRoot(xmlfile) #gives content of root
+
+rbt.version = xmlChildren(xmltop)[c("rbt_version")]$rbt_version[[1]]
+rbt.version = as(rbt.version, "character")
+}
+rbt.version
+#
+#
+#
+##########################
+
 
 # Read the DEM into data`.frame "data"
 data =read.csv("DEM.csv", header=F)
@@ -1525,7 +1545,8 @@ meta.data = list(
 "Build.Input.File.R.Version" = Build.Input.File.R.Version,
 "Delft3D.Version" = Delft3D.Version,
 "Operator" = Operator,
-"Pre.Processing.Date.Time" = Sys.time()
+"Pre.Processing.Date.Time" = Sys.time(),
+"rbt.version" = rbt.version
 )
 
 names(site.list)
