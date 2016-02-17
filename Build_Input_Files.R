@@ -768,7 +768,7 @@ print(VOL)
 
 # Adjusted this line to ensure sufficient "fill" when we're running at higher discharges,
 # which will require higher volume to fill.  It's a swag but should work.
-Min.Sim.sec = VOL/discharge * sqrt(discharge/site.list$Measured.Discharge) # time to fill volume, based on discharge, in seconds
+Min.Sim.sec = VOL/discharge * sqrt(discharge/site.list$Measured.Discharge[k]) # time to fill volume, based on discharge, in seconds
 simtime = max(10, round(Min.Sim.sec / 60 * 2))
 
 
