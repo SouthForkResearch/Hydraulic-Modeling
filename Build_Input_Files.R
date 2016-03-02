@@ -545,7 +545,7 @@ if (site.list$SiteID[k]== "CBW05583-086186") {dwest = 0}
 if (site.list$SiteID[k]== "CBW05583-142490") {dnorth = 0}
 if (site.list$SiteID[k]== "CBW05583-232818") {dnorth = 0}
 if (site.list$SiteID[k]== "CBW05583-312265") {dsouth = 0}
-
+if (site.list$SiteID[k]== "LEM00001-Little0Springs-2") {dnorth = 0}
 #####################################################
 if (min(dwest, deast, dnorth, dsouth)==dwest) {
 minX = outletX + slop
