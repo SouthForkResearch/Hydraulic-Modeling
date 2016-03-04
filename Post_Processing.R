@@ -699,6 +699,7 @@ cat(paste("<?xml version=\"1.0\" encoding=\"utf-8\"?>
        <watershed>",Meta.Data$WatershedName,"</watershed>
        <run_type>","NA","</run_type>
        <surveyed_discharge>", surv_dish, "</surveyed_discharge>
+       <qa_status>pass</qa_status>
        <data>
             <d84>",Meta.Data$D84,"</d84>
             <surface_roughness>",Meta.Data$Roughness.Input,"</surface_roughness>
