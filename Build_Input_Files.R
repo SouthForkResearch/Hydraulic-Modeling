@@ -347,7 +347,6 @@ if (is.numeric(WSEDEM[,1])==F)
 
 
 names(WSEDEM) = c("ws.X", "ws.Y", "ws.Z")
-
 #max(WSEDEM$ws.Z)
 WSEDEM = WSEDEM[WSEDEM$ws.Z > -9999,]
 #min(WSEDEM$ws.Z)
@@ -486,6 +485,11 @@ deast = abs(inletX-maxX)
 dnorth = abs(inletY-maxY)
 dsouth = abs(inletY-minY)
 
+
+if (site.list$SiteID[k]== "LEM00002-00001B") {dsouth = 0}
+if (site.list$SiteID[k]== "CBW05583-029535") {dwest = 0}
+
+
 # Use the minimum distance to define inlet side. Cut some "slop" off the DEM grid to create the
 # actual computational grid, to ensure the computation inlet boundary entirely cross the inlet of
 # the stream.
@@ -546,6 +550,7 @@ if (site.list$SiteID[k]== "CBW05583-142490") {dnorth = 0}
 if (site.list$SiteID[k]== "CBW05583-232818") {dnorth = 0}
 if (site.list$SiteID[k]== "CBW05583-312265") {dsouth = 0}
 if (site.list$SiteID[k]== "LEM00001-Little0Springs-2") {dnorth = 0}
+if (site.list$SiteID[k]== "LEM00002-00001B") {dnorth = 0}
 #####################################################
 if (min(dwest, deast, dnorth, dsouth)==dwest) {
 minX = outletX + slop
@@ -659,19 +664,24 @@ GridZ = matrix(GZvec, c(NX, NY))
 
 ### Also find WS elevation.  This will be used to define exit boundary condition. 
 # This is done similarly to above
-
 WSvec = GZvec
-WSDatXY = DatXY = data.frame(WSEDEM$ws.X, WSEDEM$ws.Y)
+WSDatXY = data.frame(WSEDEM$ws.X, WSEDEM$ws.Y)
+DatXY
+data.frame(WSEDEM$ws.X, WSEDEM$ws.Y)
 nearest = nn2(WSDatXY, GXY, 1)
 WSvec  = WSEDEM$ws.Z[nearest$nn.idx]
 
+# Prevent max water being higher than max elevation, since this happened once.
+# Not sure if I should error proof this or not.
+# (3/23/2016)
+WSvec[WSvec > max(GZvec)] = max(GZvec)
 # if bathymetry is above water surface, set water surface to bathymetry
 WSvec[GZvec >= WSvec] = GZvec[GZvec >= WSvec]
 
 
 #Convert to Depth by subtracting water surface elevation
 WSvec = WSvec - max(GZvec)
-
+max(WSvec)
 # Convert to matrix in same format as X, Y, and Z matrices
 WS.Z = matrix(WSvec, c(NX, NY))
 
@@ -733,6 +743,7 @@ dev.off()
 
 #jpeg(paste(QA.folder,"WS_Elevation_",site.list$SiteID[k],site.list$Year[k],".jpg",sep=""), 6,6, units='in', res=600)
 jpeg(paste(QA.folder,"WS_Elevation.jpg",sep=""), 6,6, units='in', res=600)
+
 
 color = colorp[round((-1*WS.Z)/max(-1*WS.Z)*48)+1]
 color[depth == 0] = "white"
