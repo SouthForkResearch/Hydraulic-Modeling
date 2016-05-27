@@ -327,6 +327,7 @@ min(data$grid_code)
 #plot(data$X, data$Y)
 ############ if using modified DEM ################
 if (modDEM == TRUE) {
+if ("DEM1_after_setNull.tif" %in% dir(WorkingDir)){
 after = raster(paste(WorkingDir,"//DEM1_after_setNull.tif", sep=""))
 plot(after)
 newvalues = extract(after, data.frame(data$X, data$Y))
@@ -338,6 +339,7 @@ max(modifiedDEM$grid_code)
 min(modifiedDEM$grid_code[modifiedDEM$grid_code > 0])
 write.csv(modifiedDEM,"ModDEM.csv",row.names=F)
 data = modifiedDEM
+}
 }
 nrow(data)
 names(data)
