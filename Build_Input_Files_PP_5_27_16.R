@@ -321,7 +321,7 @@ nrow(data)
 max(data$grid_code)
 median(data$grid_code)
 min(data$grid_code)
-
+ 
 #####################################################
 min(data$grid_code)
 #plot(data$X, data$Y)
