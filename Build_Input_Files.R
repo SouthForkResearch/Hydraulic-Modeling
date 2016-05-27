@@ -492,7 +492,7 @@ if (site.list$SiteID[k]== "CBW05583-515058_ModifiedDEM") {dsouth=0}
 if (site.list$SiteID[k]== "ENT201301-TyeeSide") {dwest = 0}
 if (site.list$SiteID[k]== "ENT00001-1BC11") {dwest = 0}
 
-
+ 
 
 # Use the minimum distance to define inlet side. Cut some "slop" off the DEM grid to create the
 # actual computational grid, to ensure the computation inlet boundary entirely cross the inlet of
