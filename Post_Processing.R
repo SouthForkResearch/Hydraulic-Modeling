@@ -759,8 +759,8 @@ max
 # standardize for depth error from -1 to 1
 if (title == "Depth.Error"){
  title = "Depth Error (m) "
- min = -.4
- max = .5}
+ min = -.2
+ max = .2}
 
 if (title == "Velocity.Magnitude") {title = "Velocity (m/s)"}
 if (title =="Depth") {title = "Depth (m)"}
