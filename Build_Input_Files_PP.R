@@ -8,7 +8,7 @@
 Build.Input.File.R.Version = 1.0
 Delft3D.Version = "4.01.00.rc.02"
 Operator = "Matt Nahorniak"
-
+modDEM = TRUE
 
 setwd( "C:/Matt-SFR Files/Hydraulic Modeling/R Code to Build Input Files")
 
@@ -42,6 +42,7 @@ savedwd = getwd()
 
 library(RANN) # library for nearest neighbor search routine.  Very useful!!!
 library(XML) # read input xml file to get rbt_version
+library(raster) # for porous plate stuff
 
 # Set Some Hard Coded Numerical Parameters for CFD Solution.  Others are read from .csv file.
   # Hard Coded Time Step used in Delft 3D (to be used later)
@@ -152,7 +153,7 @@ for (k in 1:nrow(site.list)){
 site.list$Results.Folder
 #############
 
-}
+
 
 names(site.list)
 
@@ -313,8 +314,42 @@ data =read.csv("DEM.csv", header=F)
 if (is.numeric(data[,1])==F){
 data= read.csv("DEM.csv", header=T)}
 
-
 names(data) = c("X", "Y", "grid_code")
+nrow(data)
+
+1315631
+max(data$grid_code)
+median(data$grid_code)
+min(data$grid_code)
+ 
+#####################################################
+min(data$grid_code)
+#plot(data$X, data$Y)
+############ if using modified DEM ################
+if (modDEM == TRUE) {
+if ("DEM1_after_setNull.tif" %in% dir(WorkingDir)){
+after = raster(paste(WorkingDir,"//DEM1_after_setNull.tif", sep=""))
+plot(after)
+newvalues = extract(after, data.frame(data$X, data$Y))
+modifiedDEM = data.frame("X"=data$X, "Y"=data$Y, "grid_code"= newvalues)
+nrow(modifiedDEM)
+names(modifiedDEM)
+modifiedDEM$grid_code[is.na(modifiedDEM$grid_code)] = -9999
+max(modifiedDEM$grid_code)
+min(modifiedDEM$grid_code[modifiedDEM$grid_code > 0])
+write.csv(modifiedDEM,"ModDEM.csv",row.names=F)
+data = modifiedDEM
+}
+}
+nrow(data)
+names(data)
+########################################################
+
+
+
+
+
+
 ref.left = min(data$X)-.05
 ref.top = max(data$Y)+.05
 
@@ -347,6 +382,7 @@ if (is.numeric(WSEDEM[,1])==F)
 
 
 names(WSEDEM) = c("ws.X", "ws.Y", "ws.Z")
+
 #max(WSEDEM$ws.Z)
 WSEDEM = WSEDEM[WSEDEM$ws.Z > -9999,]
 #min(WSEDEM$ws.Z)
@@ -414,6 +450,9 @@ maxX = max(Xlist)
 minX = min(Xlist)
 maxY = max(Ylist)
 minY = min(Ylist)
+
+maxX
+minX
 
 ### Plot a rectangle that contains all DEM points (and some empty points)
 #plot(c(minX, maxX, maxX, minX, minX),
@@ -485,15 +524,14 @@ deast = abs(inletX-maxX)
 dnorth = abs(inletY-maxY)
 dsouth = abs(inletY-minY)
 
-
-if (site.list$SiteID[k]== "LEM00002-00001B") {dsouth = 0}
-if (site.list$SiteID[k]== "CBW05583-029535") {dwest = 0}
+if (site.list$SiteID[k]== "CBW05583-515058_ModifiedDEM") {dsouth=0}
+if (site.list$SiteID[k]== "ENT201301-TyeeSide") {dwest = 0}
 if (site.list$SiteID[k]== "CBW05583-515058_ModifiedDEM") {dsouth=0}
 if (site.list$SiteID[k]== "ENT201301-TyeeSide") {dwest = 0}
 if (site.list$SiteID[k]== "ENT00001-1BC11") {dwest = 0}
 
- 
-
+dsouth
+deast
 # Use the minimum distance to define inlet side. Cut some "slop" off the DEM grid to create the
 # actual computational grid, to ensure the computation inlet boundary entirely cross the inlet of
 # the stream.
@@ -553,9 +591,9 @@ if (site.list$SiteID[k]== "CBW05583-086186") {dwest = 0}
 if (site.list$SiteID[k]== "CBW05583-142490") {dnorth = 0}
 if (site.list$SiteID[k]== "CBW05583-232818") {dnorth = 0}
 if (site.list$SiteID[k]== "CBW05583-312265") {dsouth = 0}
-if (site.list$SiteID[k]== "LEM00001-Little0Springs-2") {dnorth = 0}
-if (site.list$SiteID[k]== "LEM00002-00001B") {dnorth = 0}
+
 #####################################################
+
 if (min(dwest, deast, dnorth, dsouth)==dwest) {
 minX = outletX + slop
 outlet = "west"}
@@ -578,7 +616,7 @@ minY = outletY + slop
 #maxY = maxY - slop
 outlet = "south" }
 
-
+outlet
 
 #lines(c(minX, maxX, maxX, minX, minX),
 #    c(minY, minY, maxY, maxY, minY), type="l", col="red")
@@ -606,7 +644,9 @@ outlet = "south" }
 xrange = maxX-minX
 yrange = maxY-minY
 
-
+minX
+maxX
+DX
 NX = round((maxX - minX)/DX)
 NY = round((maxY - minY)/DX)
 
@@ -668,24 +708,19 @@ GridZ = matrix(GZvec, c(NX, NY))
 
 ### Also find WS elevation.  This will be used to define exit boundary condition. 
 # This is done similarly to above
+
 WSvec = GZvec
-WSDatXY = data.frame(WSEDEM$ws.X, WSEDEM$ws.Y)
-DatXY
-data.frame(WSEDEM$ws.X, WSEDEM$ws.Y)
+WSDatXY = DatXY = data.frame(WSEDEM$ws.X, WSEDEM$ws.Y)
 nearest = nn2(WSDatXY, GXY, 1)
 WSvec  = WSEDEM$ws.Z[nearest$nn.idx]
 
-# Prevent max water being higher than max elevation, since this happened once.
-# Not sure if I should error proof this or not.
-# (3/23/2016)
-WSvec[WSvec > max(GZvec)] = max(GZvec)
 # if bathymetry is above water surface, set water surface to bathymetry
 WSvec[GZvec >= WSvec] = GZvec[GZvec >= WSvec]
 
 
 #Convert to Depth by subtracting water surface elevation
 WSvec = WSvec - max(GZvec)
-max(WSvec)
+
 # Convert to matrix in same format as X, Y, and Z matrices
 WS.Z = matrix(WSvec, c(NX, NY))
 
@@ -748,7 +783,6 @@ dev.off()
 #jpeg(paste(QA.folder,"WS_Elevation_",site.list$SiteID[k],site.list$Year[k],".jpg",sep=""), 6,6, units='in', res=600)
 jpeg(paste(QA.folder,"WS_Elevation.jpg",sep=""), 6,6, units='in', res=600)
 
-
 color = colorp[round((-1*WS.Z)/max(-1*WS.Z)*48)+1]
 color[depth == 0] = "white"
 plot(GridX, GridY, col=color, pch=19, cex=.1,
@@ -775,19 +809,23 @@ dev.off()
 # time required:  Need to "fill" entire volume with discharge,
 # and then allow to run until stable.  Use ~ 2X time to fill volume at discharge rate
 
+max(WS.Z)
+max(depth)
+discharge
+
 Wdepth = WS.Z + depth
 Wdepth
 VOL = sum(Wdepth)*DX*DX
 print("VOL")
 print(VOL)
-
+site.list$Measured.Discharge[k]
 # Adjusted this line to ensure sufficient "fill" when we're running at higher discharges,
 # which will require higher volume to fill.  It's a swag but should work.
 Min.Sim.sec = VOL/discharge * sqrt(discharge/site.list$Measured.Discharge[k]) # time to fill volume, based on discharge, in seconds
-if (site.list$Measured.Discharge[k] == 0) {Min.Sim.sec = VOL/discharge+10*60} # To prevent breakage if measured discharge =0
+if (site.list$Measured.Discharge[k] == 0) {Min.Sim.sec = VOL/discharge + 10*60} # To prevent breakage if measured discharge =0
 
 simtime = max(10, round(Min.Sim.sec / 60 * 2))
-
+simtime
 
 ######################################################
 # Plot Water Depth #########################
@@ -1046,7 +1084,8 @@ outflow.ws.level
 
 
 ### Here's my outflow boundary condition ##################
-
+#manual override for bad BC for site  ENT00001-3A6
+if (site.list$SiteID[k]== "ENT00001-3A6") {outflow.y.idx[2]=435}
 
 #write file "test.bnd"
 cat("outflow             ","Z","T", outflow.x.idx[1], outflow.y.idx[1],
@@ -1297,6 +1336,237 @@ for (r in 1:rows) {
 
 
 
+########################################################################33
+########################################################################
+
+# Check if we've got a porous plates input file
+if (("elj_locs.csv" %in% dir(WorkingDir))) {
+
+#if (modDEM==TRUE) {
+# Define porous plates... very much a manual process at this point
+
+# We'll need to use the offsets again
+# The offset is just min(GridX) and min(GridY)
+
+#lines(c(-1000, 9999999), c(min(GridY), min(GridY)))
+por = 5
+#thick = .25
+
+
+# read the file with the porous plates defined on x-y grid
+#pp = read.csv("C:\\Matt-SFR Files\\Hydraulic Modeling\\Modified DEMS for porous structures\\mfjdSimRestTrialData\\elj_att_tab_EW.csv", header=T)
+dir()
+WorkingDir
+pp = read.csv(paste(WorkingDir,"\\elj_locs.csv",sep=""), header=T)
+pp
+pp$START_X
+pp$START_Y
+pp$MID_Y
+names(pp)
+pp_Xidx = NULL
+pp_Yidx = NULL
+
+pps=1
+for (pps in 1:nrow(pp)){
+thick = pp$Thickness_m[pps]/2
+thick
+
+
+#xx= c(pp$START_X[pps]-min(GridX),pp$MID_X[pps]-min(GridX), pp$END_X[pps]-min(GridX)) 
+#yy= c(pp$START_Y[pps]-min(GridY),pp$MID_Y[pps]-min(GridY),pp$END_Y[pps]-min(GridY)) 
+
+
+
+# find distance xy to line
+# Can add an x3, y3 if we want two "lines" of porous plate per structure.
+# Need to talk to Eric et al about that.
+dist = function(x0, x1, x2, x3, y0, y1, y2, y3) {
+xs = c(seq(x1, x2, by=(x2-x1)/100), seq(x2, x3, by= (x3-x2)/100))
+ys = c(seq(y1, y2, by =(y2-y1)/100), seq(y2, y3, by=(y3-y2)/100))
+
+
+data.frame(xs, ys)
+dists = rep(-1, length(xs))
+d = min(sqrt((xs-x0)^2 + (ys-y0)^2))
+return(d)
+}
+
+
+x1 = pp$START_X[pps]-min(GridX)
+x2 = pp$MID_X[pps]-min(GridX)
+x3 = pp$END_X[pps]-min(GridX)
+y1 = pp$START_Y[pps]-min(GridY)
+y2 = pp$MID_Y[pps]-min(GridY)
+y3 = pp$END_Y[pps]-min(GridY)
+
+x1
+x2
+x3
+y1
+y2
+y3
+
+
+distance = X*0 + 9999
+
+minx = min(x1, x2, x3)
+maxx = max(x1, x2, x3)
+miny = min(y1, y2, y3)
+maxy = max(y1, y2, y3)
+minx = max(0, minx)
+miny = max(0, miny)
+maxx = max(0, maxx)
+maxy = max(0, maxy)
+maxx = min(maxx, max(X))
+minx = min(max(X), minx)
+maxy = min(maxy, max(Y))
+miny = min(max(Y), miny)
+
+max(X)
+
+m1 = match(round(minx),round(X[,1]))
+m2 = match(round(maxx),round(X[,1]))
+m1
+m2
+n1 = match(round(miny),round(Y[1,]))
+n2 = match(round(maxy),round(Y[1,]))
+n1
+n2
+
+pp.slop=round(thick/DX)
+pp.slop
+
+# Add some slop to make sure we test enough points
+minm = max(1, m1-100)
+maxm = min(M, m2+100)
+minn = max(1, n1-100)
+maxn = max(N, n2+100) 
+
+minn = max(1,minn)
+maxn = min(maxn,N)
+minm = max(1, minm)
+maxm = min(maxm, M)
+
+if (is.na(minn)){minn = 1}
+if (is.na(maxn)){maxn = N}
+if (is.na(minm)){minm = 1}
+if (is.na(maxm)){minn = M}
+
+
+for (m in minm:maxm) {
+# print(paste(m, "of", M))
+ for (n in minn:maxn) {
+   distance[m,n]= 
+dist(X[m,n],x1, x2, x3, Y[m,n],y1,y2,y3)
+# print(distance[m,n])
+}}
+
+
+Xidx = matrix(rep(1:M,N),c(M,N))
+Yidx = t(matrix(rep(1:N,M),c(N,M)))
+
+Xidx = as.vector(Xidx)
+Yidx = as.vector(Yidx)
+length(Xidx)
+
+distance[1,1]
+length(distance)
+M*N
+d=as.vector(distance)
+length(d)/N
+
+min(d)
+max(d)
+dim(d)
+length(Xidx)
+length(d)
+Xidx = Xidx[d< thick]
+Yidx = Yidx[d< thick]
+Xidx
+Yidx
+pp_Xidx = c(Xidx, pp_Xidx)
+pp_Yidx = c(Yidx, pp_Yidx)
+} # end of loop through rows of file
+
+
+#plot(pp_Xidx, pp_Yidx, pch=1)
+
+# Remove any duplicates due to over-lapping porous structures
+length(pp_Xidx)
+temp=paste(pp_Xidx, pp_Yidx)
+temp2=levels(factor(temp))
+temp.idx = match(temp2,temp)
+length(temp.idx)
+pp_Xidx = pp_Xidx[temp.idx]
+pp_Yidx = pp_Yidx[temp.idx]
+
+
+
+## Optional - plot.
+#################
+#library(spsurvey)
+#WorkingDir
+#elj=read.shape(paste(WorkingDir,"/ELJ_USFWS_ENFH_UTM_shifted",sep=""))
+#col.idx =1+(round(9*(data[,3]-min(data[,3]))/(max(data[,3])-min(data[,3]))))
+##plot(data$X-min(GridX), data$Y-min(GridY),col=rainbow(10)[col.idx])
+#plot(data$X, data$Y,col=rainbow(10)[col.idx],,
+#xlab="Easting", ylab="Northing")
+#plot(elj, add=T)
+#
+#for (idx in 1:length(pp_Xidx)){
+# points(X[pp_Xidx[idx],pp_Yidx[idx]]+min(GridX)
+#,Y[pp_Xidx[idx], pp_Yidx[idx]]+min(GridY), pch=19, cex=.1)
+#}
+
+
+#################
+jpeg(paste(QA.folder,"porous_plates.jpg",sep=""), 6,6, units='in', res=600)
+
+col.idx =1+(round(9*(data[,3]-min(data[,3]))/(max(data[,3])-min(data[,3]))))
+#plot(data$X-min(GridX), data$Y-min(GridY),col=rainbow(10)[col.idx])
+plot(data$X, data$Y,col=rainbow(10)[col.idx],,
+xlab="Easting", ylab="Northing")
+
+pp_Xidx
+pp_Yidx
+
+m=1
+n=1
+for (idx in 1:length(pp_Xidx)){
+ points(X[pp_Xidx[idx],pp_Yidx[idx]]+min(GridX)
+,Y[pp_Xidx[idx], pp_Yidx[idx]]+min(GridY), pch=19, cex=.1)
+}
+dev.off()
+
+# Write ppl file
+#############################################
+cat("", file = "test.ppl")
+length(pp_Xidx)
+for (pp.idx in 1:length(pp_Xidx)){
+cat(file="test.ppl", append=T,paste("U", pp_Xidx[pp.idx], pp_Yidx[pp.idx],pp_Xidx[pp.idx], pp_Yidx[pp.idx], "1 1", por),"\n")
+cat(file="test.ppl", append=T,paste("V", pp_Xidx[pp.idx], pp_Yidx[pp.idx],pp_Xidx[pp.idx], pp_Yidx[pp.idx], "1 1", por),"\n")
+}
+
+dir()
+
+}
+##### End of Re-Do.  Hope it works!!!!
+################################################
+
+
+
+# Done with porous plate file generation.  Note that this file, right now
+# is put in the wrong place.  Still need to manually move this file where we
+# want it, AND manually edit test.mdf file to show that test.ppl is an input file.
+
+
+############################################################################################
+
+
+
+
+################################
+
 #################################3
 # Bathymetry
 # Define "B-Data".
@@ -1314,6 +1584,8 @@ Bdata = array(rep(-999.0, ((M+1)*(N+1))), c((M+1), (N+1)))
 Bdata[1:M, 1:N] = depth
 Bdata[M+1, 1:N] = Bdata[M, 1:N]
 Bdata[,N+1] = Bdata[,N]
+
+
 
 max(Bdata)
 dim(Bdata)
@@ -1404,6 +1676,121 @@ output.interval = max(1,round((simtime-5)/20))
 
 HEV = site.list$HEV[k]
 
+modDEM
+#if (modDEM == TRUE) {ppl.text = "Filppl = #test.ppl#"}  else {ppl.text = "Commnt =                 no ppl file"} 
+#if (modDEM == TRUE) {
+
+# If we have a porous plate input file...
+if (("elj_locs.csv" %in% dir(WorkingDir))) {
+# Write the mdf File!
+cat("Ident  = #Delft3D-FLOW 3.43.05.22651#
+Commnt =                  
+Filcco = #test.grd#
+Anglat =  0.0000000e+000
+Grdang =  0.0000000e+000
+Filgrd = #test.enc#
+MNKmax = ",NX+1, NY+1, 1," 
+Thick  =  1.0000000e+002
+Commnt =                  
+Fildep = #test.dep#
+Commnt =                  
+Commnt =                 no. dry points: 1437
+Fildry = #test.dry#
+Commnt =                 no. thin dams: 0
+Commnt =                  
+Itdate = #2013-01-01#
+Tunit  = #M#
+Tstart =  0.0000000e+000
+Tstop  =  ", simtime,"
+Dt     = ",dt,"
+Tzone  = 0
+Commnt =                  
+Sub1   = #    #
+Sub2   = #   #
+Commnt =                  
+Wnsvwp = #N#
+Wndint = #Y#
+Commnt =       
+Zeta0  = ",outflow.ws.level,"
+Commnt =                  
+Commnt =                 no. open boundaries: 1
+Filbnd = #test.bnd#
+Filppl = #test.ppl#
+FilbcT = #test.bct#
+Commnt =                  
+Ag     =  9.8100000e+000
+Rhow   =  1.0000000e+003
+Tempw  =  1.5000000e+001
+Salw   =  3.1000000e+001
+Wstres =  6.3000000e-004  0.0000000e+000  7.2300000e-003  1.0000000e+002  7.2300000e-003  1.0000000e+002
+Rhoa   =  1.0000000e+000
+Betac  =  5.0000000e-001
+Equili = #N#
+Ktemp  = 0
+Fclou  =  0.0000000e+000
+Sarea  =  0.0000000e+000
+Temint = #Y#
+Commnt =                  
+Roumet = #W#
+Ccofu  =  ", Ccofu,"
+Ccofv  =  ", Ccofv,"
+Xlo    =  0.0000000e+000
+Vicouv =  ", HEV, "
+Dicouv =  1.0000000e+001
+Htur2d = #N#
+Irov   = 0
+Commnt =                  
+Iter   =      2
+Dryflp = #YES#
+Dpsopt = #MAX#
+Dpuopt = #MEAN#
+Dryflc =  1.0000000e-002
+Dco    = -9.9900000e+002
+Tlfsmo =  5.0000000e+000
+ThetQH =  0.0000000e+000
+Forfuv = #Y#
+Forfww = #N#
+Sigcor = #N#
+Trasol = #Cyclic-method#
+Momsol = #Cyclic#
+Commnt =                  
+Commnt =                 no. discharges:", length(inlet.discharge),"
+Filsrc = #test.src#
+Fildis = #test.dis#
+Commnt =                 no. observation points: 2
+Filsta = #test.obs#
+Commnt =                 no. drogues: 0
+Commnt =                  
+Commnt =                  
+Commnt =                 no. cross sections: 0
+Commnt =                  
+SMhydr = #YYYYY#     
+SMderv = #YYYYYY#    
+SMproc = #YYYYYYYYYY#
+PMhydr = #YYYYYY#    
+PMderv = #YYY#       
+PMproc = #YYYYYYYYYY#
+SHhydr = #YYYY#      
+SHderv = #YYYYY#     
+SHproc = #YYYYYYYYYY#
+SHflux = #YYYY#      
+PHhydr = #YYYYYY#    
+PHderv = #YYY#       
+PHproc = #YYYYYYYYYY#
+PHflux = #YYYY#      
+Online = #N#
+Waqmod = #N#
+Flmap  =  0.0000000e+000 ",output.interval," ",simtime,"
+Flhis  =  0.0000000e+000 ",output.interval," ",simtime,"
+Flpp   =  0.0000000e+000 ",output.interval," ",simtime,"
+Flrst  = 1
+Commnt =                  
+Commnt =   ",
+file= "test.mdf")}
+
+# If we don't have a porous plate input file
+if (("elj_locs.csv" %in% dir(WorkingDir))==FALSE) {
+#if (modDEM == FALSE) {
 # Write the mdf File!
 cat("Ident  = #Delft3D-FLOW 3.43.05.22651#
 Commnt =                  
@@ -1507,7 +1894,12 @@ Flpp   =  0.0000000e+000 ",output.interval," ",simtime,"
 Flrst  = 1
 Commnt =                  
 Commnt =   ",
-file= "test.mdf")
+file= "test.mdf")}
+
+
+
+##################################
+
 
 detach(thalweg)       
         

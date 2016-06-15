@@ -705,8 +705,11 @@ cat(paste("<?xml version=\"1.0\" encoding=\"utf-8\"?>
             <surface_roughness>",Meta.Data$Roughness.Input,"</surface_roughness>
             <measured_discharge>",Meta.Data$Measured_Discharge,"</measured_discharge>
             <modeled_discharge>",Meta.Data$Discharge,"</modeled_discharge>
+            <deltabc>",Meta.Data$DeltaBC,"</deltabc>
             <downstream_boundary>",Meta.Data$Exit_BC,"</downstream_boundary>
             <trim_length>",Meta.Data$TrimLength,"</trim_length>
+            <inlet>",Meta.Data$Inlet,"</inlet>
+            <outlet>",Meta.Data$Outlet,"</outlet>
             <hev>",Meta.Data$HEV,"</hev>
             <left_reference>",Meta.Data$Left.Reference,"</left_reference>
             <top_reference>",Meta.Data$Top.Reference,"</top_reference>
