@@ -83,6 +83,11 @@ CFD_SiteList$Model = as.character(CFD_SiteList$Model)
 CFD_SiteList$Model[Model == F] = "No"
 ##############################
 
+# Set Discharge to 0 if NA, otherwise build_input_files.R craches
+CFD_SiteList$Measured.Discharge[is.na(CFD_SiteList$Measured.Discharge)==T]=0
+CFD_SiteList$Modeled.Discharge[is.na(CFD_SiteList$Modeled.Discharge)==T]=0
+
+
 
 write.csv(CFD_SiteList,"CFD_Site_List.csv")
 CFD_SiteList
