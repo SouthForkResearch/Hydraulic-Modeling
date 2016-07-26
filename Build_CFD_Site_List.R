@@ -15,7 +15,16 @@ dirs
 #hydro.dirs = sub("/HydroModelInputs.zip", "", dirs)
 csv_dirs = sub("WSEDEM.csv", "", dirs)
 csv_dirs = paste("c://Matt-SFR Files/Hydraulic Modeling/champ data from bucket/", csv_dirs, sep="")
-csv_dirs
+
+# Screen out any directories that don't contain all the needed input files.
+all.files = rep(T, length(csv_dirs))
+for (i in 1:length(csv_dirs)){
+all.files[i]=("DEM.csv" %in% dir(csv_dirs[i]) & "WSEDEM.csv" %in% dir(csv_dirs[i])  & "Thalweg.csv" %in% dir(csv_dirs[i]))
+}
+all.files
+csv_dirs = csv_dirs[all.files]
+
+
 ##unzip the data
 #for (i in 1:length(dirs)){
 #unzip(dirs[i], exdir=hydro.dirs[i])
@@ -57,7 +66,7 @@ CFD_SiteList = data.frame(
 "Year"=MVI$VisitYear[idx],
 "WatershedName"=MVI$WatershedName[idx],
 "VisitID" = VisitIDs,
-"Trim Length" = rep(10, length(idx)),
+"Trim Length" = rep(2, length(idx)),
 "HEV" = rep(.01, length(idx)),
 "DeltaBC" = rep(0, length(idx)))
 
@@ -65,7 +74,15 @@ CFD_SiteList = data.frame(
 CFD_SiteList$SiteID = gsub(" ","", CFD_SiteList$SiteID)
 CFD_SiteList$WatershedName = gsub(" ","", CFD_SiteList$WatershedName)
 
-CFD_SiteList
+
+# Set Model to "No" if any NA's or if discharge = 0
+complete.cases(CFD_SiteList)
+Model = complete.cases(CFD_SiteList)
+Model[CFD_SiteList$Measured.Discharge < .0001] = F
+CFD_SiteList$Model = as.character(CFD_SiteList$Model)
+CFD_SiteList$Model[Model == F] = "No"
+##############################
+
 
 write.csv(CFD_SiteList,"CFD_Site_List.csv")
 CFD_SiteList
