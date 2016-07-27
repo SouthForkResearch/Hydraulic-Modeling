@@ -73,7 +73,7 @@ site.list$D3D.Input.Folder = rep("", nrow(site.list))
 Variant = rep("", nrow(site.list))
 k=1
 for (k in 1:nrow(site.list)){
-
+if (site.list$Model[k] == "Yes") {
 # Need a "variant string" 6 characters long, plus one for the leading letter.
 Variant.str = as.character(signif(round(site.list$Modeled.Discharge[k],4),4))
 lead.zeroes =rep("0", 6-nchar(Variant.str))
@@ -89,7 +89,7 @@ if (site.list$Measured.Discharge[k] == site.list$Modeled.Discharge[k]){
 site.list$D3D.Input.Folder[k]=paste(site.list$Directory[k],"S", Variant.str, sep="")} else{
 site.list$D3D.Input.Folder[k]=paste(site.list$Directory[k],"M", Variant.str, sep="")} 
 dir.create(site.list$D3D.Input.Folder[k])
-
+}
 }
 
 site.list$D3D.Input.Folder
@@ -97,6 +97,7 @@ site.list$D3D.Input.Folder
 names(site.list)
 
 for (k in 1:nrow(site.list)) { 
+
 if (site.list$Measured.Discharge[k] == site.list$Modeled.Discharge[k]){
   Variant[k] = paste("S", Variant[k], sep="")} else {
   Variant[k] = paste("M", Variant[k], sep="")}
@@ -113,6 +114,7 @@ Variant
 site.list$Results.Folder
 
 for (k in 1:nrow(site.list)){
+if (site.list$Model[k] == "Yes") {
 
 # Should I have spaces or not?
 
@@ -146,13 +148,14 @@ for (k in 1:nrow(site.list)){
          "/VISIT_",
          site.list$VisitID,"/", "Hydro/Results/",Variant, sep="")[k])
 
-
+}
 }
 
+warnings()
 site.list$Results.Folder
 #############
 
-}
+
 
 names(site.list)
 
