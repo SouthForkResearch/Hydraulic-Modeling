@@ -1670,8 +1670,15 @@ if (simtime > 500) {dt = .025}
 # Note: There's a lot here that's un-needed, as far as what get's written to the output, tracking points,
 # etc.  Some clean up to do.  I left it all in as it's probbly easier to cut stuff later than add stuff later.
 
-output.interval = max(1, round(simtime / 5))
-output.interval = max(1,round((simtime-5)/20))
+#output.interval = max(1, round(simtime / 5))
+#output.interval = max(1,round((simtime-5)/20))
+
+# Change 7_28_2016:  Let's always write outputs so that there's exactly 10 outputs.  We need
+# this value known for pulling data from vs.exe.  (It doesn't have to be 10, but it has to
+# be known
+
+output.interval = simtime/(10)
+output.interval
 #output.interval =.1
 
 HEV = site.list$HEV[k]
@@ -1783,7 +1790,7 @@ Waqmod = #N#
 Flmap  =  0.0000000e+000 ",output.interval," ",simtime,"
 Flhis  =  0.0000000e+000 ",output.interval," ",simtime,"
 Flpp   =  0.0000000e+000 ",output.interval," ",simtime,"
-Flrst  = 1
+Flrst  = ",simtime,"
 Commnt =                  
 Commnt =   ",
 file= "test.mdf")}
