@@ -5,7 +5,8 @@
 # Updated 6_23_2015
 ##########################################################
 
-Build.Input.File.R.Version = 1.0
+Build.Input.File.R.Version = 1.1
+# 1.1 makes changes to enable using vs.exe instead of Quickplot to pull data from trim_test.dat
 Delft3D.Version = "4.01.00.rc.02"
 Operator = "Matt Nahorniak"
 modDEM = TRUE
@@ -170,6 +171,7 @@ site.index
 k=site.index[1]
 k
 
+if (1==2) {
 ######################################################################################################
 # Write matlat macro file.  This will be used after running the Delft3D code to convert the
 # Delft 3D output to text files which can be read by the post-processing R scripts.  The quickplot
@@ -226,6 +228,55 @@ append=T)
 
 #### Done looping through sites to build post-processing macro "quickplot_marco.m"
 ###########################################################################################
+} # end of i (1==2) to skip the above section 
+
+
+
+######################################################################################################
+# Write vs.bat file.  This will be used after running the Delft3D code to convert the
+# Delft 3D output to text files which can be read by the post-processing R scripts.  
+
+# Start a new macro file....
+cat("path C:\\Matt-SFR Files\\Delft3D\\Delft3D_Updated\\delft3d_ohmw_4.01.00.rc.02\\delft3d\\win32\\util\\bin
+", file = "vs.bat")
+
+# Looping Through All Sites for which we need to build input files
+
+# Note that this will build input files for ALL sites in the specified directory.  To run just
+# a subset of sites, comment out the "for (k in site.index) {" line and re-rewite it to inly
+# run the index list you want to run.  
+
+for (k in site.index) {
+WorkingDir = as.character(site.list$D3D.Input.Folder[k])
+
+
+# Set the working directory
+wd = paste(WorkingDir,"/", sep="")
+
+
+# Write the macro steps for this site.  This macro will generate output files for:
+# depth averaged velocity, water depth, bed shear strewss, water level, vorticity.  
+# Each output file also contains X and Y locations by default
+cat("chdir ", wd,"
+del U_Vel.tkl
+del V_Vel.tkl
+del Active.tkl
+del Bot_Depth.tkl
+del X_Coor.tkl
+del Y_Coor.tkl
+del Water_Level.tkl
+SET PAGER=more
+vs <test.vsb
+",
+sep="",
+file = "vs.bat",
+append=T)
+}
+
+
+#### Done looping through sites to build post-processing vs.bat"
+##########################################################################################
+
 
 ###########################################################################################
 # Loop through sites to build batch file to run all simulations in batch mode
@@ -1689,6 +1740,8 @@ modDEM
 
 # If we have a porous plate input file...
 if (("elj_locs.csv" %in% dir(WorkingDir))) {
+
+
 # Write the mdf File!
 cat("Ident  = #Delft3D-FLOW 3.43.05.22651#
 Commnt =                  
@@ -1898,7 +1951,8 @@ Waqmod = #N#
 Flmap  =  0.0000000e+000 ",output.interval," ",simtime,"
 Flhis  =  0.0000000e+000 ",output.interval," ",simtime,"
 Flpp   =  0.0000000e+000 ",output.interval," ",simtime,"
-Flrst  = 1
+Flrst  = ",simtime,"
+
 Commnt =                  
 Commnt =   ",
 file= "test.mdf")}
@@ -1970,6 +2024,38 @@ meta.data = list(
 
 names(site.list)
 write.csv(meta.data,paste(site.list$D3D.Input.Folder[k],"/Meta.Data.csv", sep=""))
+
+###############################
+# Write .bat file to pull out results using vs.exe
+cat("use trim-test.dat def trim-test.def
+
+let Var_001 = KCS             (1,",N+1,",1;1,",M+1,",1) from map-const       (1,1,1)
+write Var_001 to Active.tkl
+
+let Var_002 = DPS0            (1,",N+1,",1;1,",M+1,",1) from map-const       (1,1,1)
+write Var_002 to Bot_Depth.tkl
+
+let Var_003 = YZ              (1,",N+1,",1;1,",M+1,",1) from map-const       (1,1,1)
+write Var_003 to Y_Coor.tkl
+
+let Var_004 = XZ              (1,",N+1,",1;1,",M+1,",1) from map-const       (1,1,1)
+write Var_004 to X_Coor.tkl
+
+let Var_005 = S1              (1,",N+1,",1;1,",M+1,",1) from map-series      (11,11,11)
+write Var_005 to Water_Level.tkl
+
+let Var_006 = V1              (1,",N+1,",1;1,",M+1,",1) from map-series      (11,11,11)
+write Var_006 to V_Vel.tkl
+
+let Var_007 = U1              (1,",N+1,",1;1,",M+1,",1) from map-series      (11,11,11)
+write Var_007 to U_vel.tkl
+
+Quit",
+file= "test.vsb")
+
+
+###############################
+
 
 
 WorkingDir
