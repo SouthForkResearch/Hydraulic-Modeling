@@ -538,12 +538,28 @@ deast = abs(inletX-maxX)
 dnorth = abs(inletY-maxY)
 dsouth = abs(inletY-minY)
 
-
+#Inlet boundary manual corrections
 if (site.list$SiteID[k]== "LEM00002-00001B") {dsouth = 0}
 if (site.list$SiteID[k]== "CBW05583-029535") {dwest = 0}
 if (site.list$SiteID[k]== "CBW05583-515058_ModifiedDEM") {dsouth=0}
 if (site.list$SiteID[k]== "ENT201301-TyeeSide") {dwest = 0}
 if (site.list$SiteID[k]== "ENT00001-1BC11") {dwest = 0}
+if (site.list$SiteID[k]== "ENT00001-1E1") {dnorth=0}
+if (site.list$SiteID[k]== "CBW05583-021738") {dwest=0}
+if (site.list$SiteID[k]== "OJD03458-000140") {dwest=0}
+if (site.list$SiteID[k]== "CBW05583-394703") {dNorth=0}
+if (site.list$SiteID[k]== "CBW05583-121695") {dnorth=0}
+if (site.list$SiteID[k]== "CBW05583-193375") {dNorth=0}
+if (site.list$SiteID[k]== "CBW05583-128719") {deast=0}
+if (site.list$SiteID[k]== "CBW05583-418255") {dnorth=0}
+if (site.list$SiteID[k]== "CBW05583-040217") {dwest=0}
+if (site.list$SiteID[k]== "CBW05583-042521") {dnorth=0}
+if (site.list$SiteID[k]== "CBW05583-344746") {deast=0}
+if (site.list$SiteID[k]== "MNM00001-M53247") {dsouth=0}
+if (site.list$SiteID[k]== "CBW05583-235154") {dwest=0}
+if (site.list$SiteID[k]== "CBW05583-401362") {deast=0}
+if (site.list$SiteID[k]== "CBW05583-206314") {deast=0}
+if (site.list$SiteID[k]== "CBW05583-492715") {dsouth=0}
 
  
 
@@ -599,7 +615,7 @@ dnorth = abs(outletY-maxY)
 dsouth = abs(outletY-minY)
 
 ###################################################
-# A few sites, so far, have broken the code!  Manually for boundaries for
+# A few sites, so far, have broken the code!  Manually outlet for boundaries for
 # The following!
 
 if (site.list$SiteID[k]== "CBW05583-086186") {dwest = 0}
@@ -608,6 +624,12 @@ if (site.list$SiteID[k]== "CBW05583-232818") {dnorth = 0}
 if (site.list$SiteID[k]== "CBW05583-312265") {dsouth = 0}
 if (site.list$SiteID[k]== "LEM00001-Little0Springs-2") {dnorth = 0}
 if (site.list$SiteID[k]== "LEM00002-00001B") {dnorth = 0}
+if (site.list$SiteID[k]== "ENT00001-1D4") {dsouth=0}
+if (site.list$SiteID[k]== "CBW05583-048847") {dwest=0}
+if (site.list$SiteID[k]== "CBW05583-042521") {dsouth=0}
+if (site.list$SiteID[k]== "MNM00001-000009") {dwest=0}
+
+
 #####################################################
 if (min(dwest, deast, dnorth, dsouth)==dwest) {
 minX = outletX + slop
