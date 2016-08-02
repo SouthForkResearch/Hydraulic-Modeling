@@ -5,7 +5,10 @@
 
 
 
-Post.Processcing.R.Code.Version = 1.0
+Post.Processcing.R.Code.Version = 1.1
+# Version 1.1 used output from vs.exe rather than Quickplot. Results are exactly the same, except
+# for some imperceptable roundoff error in the 4th or 5th or more decimal.
+
 #memory.limit(16194)
 
 
@@ -146,7 +149,7 @@ print(paste("k=",k))
 WorkingDir = as.character(site.list$D3D.Input.Folder[k])
 setwd(paste(WorkingDir, "/", sep=""))
 
-dir()
+
 
 # Read the meta.data file
 Meta.Data = read.csv(paste(WorkingDir,"/Meta.Data.csv", sep=""))
@@ -190,6 +193,112 @@ options(digits=12)
 WorkingDir = as.character(site.list$D3D.Input.Folder[k])
 setwd(paste(WorkingDir, "/", sep=""))
 
+
+#################################
+#######################################################################
+#######################################################################
+# Read data files output from vs.exe
+
+Uvel=as.numeric(scan(file= "U_vel.tkl", skip = 4, what="numeric"))
+Vvel=as.numeric(scan(file= "V_vel.tkl", skip = 4, what="numeric"))
+Xcoord=as.numeric(scan(file= "X_Coor.tkl", skip = 4, what="numeric"))
+Ycoord=as.numeric(scan(file= "Y_Coor.tkl", skip = 4, what="numeric"))
+BotDepth=as.numeric(scan(file= "Bot_Depth.tkl", skip = 4, what="numeric"))
+WaterLevel=as.numeric(scan(file= "Water_Level.tkl", skip = 4, what="numeric"))
+Active=as.numeric(scan(file= "Active.tkl", skip = 4, what="numeric"))
+
+# Get M and N (actually M+1 and N+1)
+dim = scan(file = "X_Coor.tkl", n=2, skip=3)
+M=dim[1]
+N=dim[2]
+
+# Put them into arrays.  Need for interpolating Xvel and Yvel onto depth and LW grid points
+Uvel = t(array(Uvel, c(N,M)))
+Vvel = t(array(Vvel, c(N,M)))
+Xcoord = t(array(Xcoord, c(N,M)))
+Ycoord = t(array(Ycoord, c(N,M)))
+Active = t(array(Active, c(N,M)))
+WaterLevel = t(array(WaterLevel, c(N,M)))
+BotDepth = t(array(BotDepth, c(N,M)))
+
+
+# Now interplate for X and Y velocity components.
+# Xvel is defined at a half cell above and below the
+# depth point.  Yvel is defined at a half cell left and right of the velocity
+# point.  Assume off the edge is zero velocity.
+
+Y_vel = Vvel
+Y_vel[1,1:N] = 0.5*Vvel[1,]
+for (m in 2:M) {Y_vel[m,] = 0.5*(Vvel[m-1,]+Vvel[m,])}
+
+X_vel = 0*Uvel
+X_vel[,1] = 0.5*Uvel[,1]
+for (n in 2:N) {X_vel[,n] = 0.5*(Uvel[,n-1]+Uvel[,n])}
+
+# Done interpolating Xvel and Yvel, still in MxN array
+#########################
+
+
+# Move everything to a linear vector, for use in the R-Code.
+# This is consistent with how the old version of the code worked when
+# using output from Quickplot.
+# Initialize vectors
+X=0
+Y=0
+Xvel=0
+Yvel=0
+WL=0
+BD=0
+AP=0
+
+# This re-assigns arrays into vectors
+idx=1
+for (n in 1:N) {
+     X[idx:(idx+M-1)] = Xcoord[1:M,n]
+     Y[idx:(idx+M-1)] = Ycoord[1:M,n]
+     Xvel[idx:(idx+M-1)] = X_vel[1:M,n]
+     Yvel[idx:(idx+M-1)] = Y_vel[1:M,n]   
+     WL[idx:(idx+M-1)] = WaterLevel[1:M,n]
+     BD[idx:(idx+M-1)] = BotDepth[1:M,n]
+     AP[idx:(idx+M-1)] = Active[1:M,n]
+   idx = idx+M
+    }
+
+# Filter everything to only active points
+X= X[AP==1]
+Y= Y[AP==1]
+Xvel=Xvel[AP==1]
+Yvel=Yvel[AP==1]
+WL=WL[AP==1]
+BD=BD[AP==1]
+
+# Plot velocity (check)
+#Vmag = sqrt(Xvel^2 + Yvel^2)
+#col.idx = 1 + trunc(9*Vmag/max(Vmag))
+#color=rainbow(10)[col.idx]
+#color[Vmag==0] = "black"
+#plot(X, Y, col=color)
+
+
+# Calculate depth and velocity magnitude
+Depth = abs(-WL-BD)
+
+#Vmag = sqrt(Xvel*Xvel + Yvel*Yvel)
+
+# Assign data frames just as used to be generated when reading files generated
+# by Quickplot
+dataVel = data.frame("X"=X,"Y"=Y, "XVel"=Xvel, "YVel"=Yvel)
+dataWaterLevel = data.frame("X"=X[Depth!=0], "Y"=Y[Depth!=0], "Z" = WL[Depth!=0])
+dataDepth = data.frame("X"=X, "Y"=Y, "Depth"=Depth)
+
+##########################################################
+##########################################################
+##########################################################
+
+
+##################################
+if (1==2) {
+# Everything below to be replaced with above #############3
 # Read the velocity outputs
 dataVel = read.table("depth averaged velocity.xyz", header=T)
 names(dataVel) = c("X", "Y", "XVel", "YVel")
@@ -207,7 +316,6 @@ names(dataDepth) = c("X", "Y","Depth")
 nrow(dataDepth)
 
 # Read teh vorticity outputs
-
 #dataVorticity = read.table("vorticity.xyz", header=T)
 #names(dataVorticity)  = c("X", "Y", "Z", "Vorticity")
 dataVorticity = dataVel[,1:3]
@@ -222,7 +330,10 @@ dataBedShear = read.table("bed shear stress.xyz", header=T)} else {
 dataBedShear = read.table("bead shear stress.xyz", header=T)}
 names(dataBedShear) = c("X", "Y", "Bed_Shear_X", "Bed_Shear_Y")
 nrow(dataBedShear)
-
+###########################################################
+# End replaced section
+###########################################################
+} # end of "if (1==2)" to skip this section
 
 
 # Read the offset file created while generating input files.
@@ -234,7 +345,7 @@ nrow(dataBedShear)
 
 offset = read.csv("offset.csv", header=T)
 
-
+names(dataWaterLevel)
 # Correct X and Y for the offset
 dataDepth$X = dataDepth$X+offset$X.offset
 dataDepth$Y = dataDepth$Y+offset$Y.offset
@@ -242,10 +353,10 @@ dataVel$X = dataVel$X+offset$X.offset
 dataVel$Y = dataVel$Y+offset$Y.offset
 dataWaterLevel$X = dataWaterLevel$X + offset$X.offset
 dataWaterLevel$Y = dataWaterLevel$Y + offset$Y.offset
-dataVorticity$X = dataVorticity$X + offset$X.offset
-dataVorticity$Y = dataVorticity$Y + offset$Y.offset
-dataBedShear$X = dataBedShear$X + offset$X.offset
-dataBedShear$Y =dataBedShear$Y + offset$Y.offset
+#dataVorticity$X = dataVorticity$X + offset$X.offset
+#dataVorticity$Y = dataVorticity$Y + offset$Y.offset
+#dataBedShear$X = dataBedShear$X + offset$X.offset
+#dataBedShear$Y =dataBedShear$Y + offset$Y.offset
 
 nrow(dataDepth)
 nrow(dataWaterLevel)
@@ -347,6 +458,8 @@ color[dataDepth$WSE == 0]="white"
 
 ########### Depth Averaged Velocity ####################################
 vmag = sqrt(dataVel$XVel^2 + dataVel$YVel^2)
+names(dataVel)
+
 maxV = max(vmag, na.rm=T)
 
 
@@ -390,9 +503,9 @@ results= data.frame(
 "Velocity.Magnitude" = vmag,
 "Depth"= dataDepth$Depth, 
 "WSE"=dataDepth$WSE, 
-"BedLevel" = dataDepth$BedElevation,
-"BedShear_X" = dataBedShear$Bed_Shear_X, "BedShear_Y" =  dataBedShear$Bed_Shear_Y,
-"Vorticity" = dataVorticity$Vorticity )
+"BedLevel" = dataDepth$BedElevation)
+#"BedShear_X" = dataBedShear$Bed_Shear_X, "BedShear_Y" =  dataBedShear$Bed_Shear_Y,
+#"Vorticity" = dataVorticity$Vorticity )
 
 results[is.na(results)==T] = -9999
 
@@ -400,8 +513,8 @@ results[is.na(results)==T] = -9999
 rm(dataVel)
 rm(vmag)
 rm(dataDepth)
-rm(dataBedShear)
-rm(dataVorticity)
+#rm(dataBedShear)
+#rm(dataVorticity)
 rm(Depth_check)
 rm(dataWaterLevel)
 gc()
@@ -429,46 +542,16 @@ DEM.Velocity.Magnitude = rep(0, nrow(data))
 DEM.Depth = rep(0, nrow(data))
 DEM.WSE = rep(0, nrow(data))
 DEM.BedLevel = rep(0, nrow(data))
-DEM.BedShear_X = rep(0, nrow(data))
-DEM.BedShear_Y = rep(0, nrow(data))
-DEM.Vorticity = rep(0, nrow(data))
+#DEM.BedShear_X = rep(0, nrow(data))
+#DEM.BedShear_Y = rep(0, nrow(data))
+#DEM.Vorticity = rep(0, nrow(data))
 
 # match DEM grid points to computational grid points using nearest neighbor search.
 # finding 8 nearest neighbors, and distance to each.
 nn.DEM = nn2(results[,1:2], data[,1:2],8)
 
 
-
-
-# Some brute-force coding to interpolate computational grid results
-# onto DEM grid.  DEM grid can be more or less fine, or exactly equal to,
-# computational grid.  
-# This takes a long time.. could probably be coded much more efficiently
-# by someone more clever than me!
-
-if (1==2) {
-for (j in 1:nrow(data)) {
-  nn.DEM$nn.dists[j,]
-  i.x = length(nn.DEM$nn.dists[j,][round(nn.DEM$nn.dists[j,],4) == round(nn.DEM$nn.dists[j,1],4)])
-  DEM.X.Velocity[j] = sum(results$X.Velocity[nn.DEM$nn.idx[j,1:i.x]] / (nn.DEM$nn.dists[j,1:i.x]+.00000001)) /sum(1/(nn.DEM$nn.dists[j,1:i.x]+.00000001))
-  DEM.Y.Velocity[j] = sum(results$Y.Velocity[nn.DEM$nn.idx[j,1:i.x]] / (nn.DEM$nn.dists[j,1:i.x]+.00000001)) /sum(1/(nn.DEM$nn.dists[j,1:i.x]+.00000001))
-  DEM.Velocity.Magnitude[j] = sum(results$Velocity.Magnitude[nn.DEM$nn.idx[j,1:i.x]] / (nn.DEM$nn.dists[j,1:i.x]+.00000001)) /sum(1/(nn.DEM$nn.dists[j,1:i.x]+.00000001))
-  DEM.Depth[j] = sum(results$Depth[nn.DEM$nn.idx[j,1:i.x]] / (nn.DEM$nn.dists[j,1:i.x]+.00000001)) /sum(1/(nn.DEM$nn.dists[j,1:i.x]+.00000001))
-  DEM.WSE[j] = sum(results$WSE[nn.DEM$nn.idx[j,1:i.x]] / (nn.DEM$nn.dists[j,1:i.x]+.00000001)) /sum(1/(nn.DEM$nn.dists[j,1:i.x]+.00000001))
-  DEM.BedLevel[j] = sum(results$BedLevel[nn.DEM$nn.idx[j,1:i.x]] / (nn.DEM$nn.dists[j,1:i.x]+.00000001)) /sum(1/(nn.DEM$nn.dists[j,1:i.x]+.00000001))
-  DEM.BedShear_X[j] = sum(results$BedShear_X[nn.DEM$nn.idx[j,1:i.x]] / (nn.DEM$nn.dists[j,1:i.x]+.00000001)) /sum(1/(nn.DEM$nn.dists[j,1:i.x]+.00000001))
-  DEM.BedShear_Y[j] = sum(results$BedShear_Y[nn.DEM$nn.idx[j,1:i.x]] / (nn.DEM$nn.dists[j,1:i.x]+.00000001)) /sum(1/(nn.DEM$nn.dists[j,1:i.x]+.00000001))
-  DEM.Vorticity[j] = sum(results$Vorticity[nn.DEM$nn.idx[j,1:i.x]] / (nn.DEM$nn.dists[j,1:i.x]+.00000001)) /sum(1/(nn.DEM$nn.dists[j,1:i.x]+.00000001))
-
-}
-} # end of "(if 1==2)"
-
 use = results$Depth >-9999
-
-
-if (1==1){
-############################
-# Replacement for above
 
 
 r=raster(xmn= min(round(results$X,2)-.05), xmx=max(round(results$X,2)+.05), 
@@ -547,39 +630,6 @@ rm(t.DEM.BedLevel)
 gc()
 
 
-print("Bed_Shear_X")
-a=rasterize(data.frame(round(results$X,3), round(results$Y,3)), r, field=results$BedShear_X)
-
-for (c in 1:(length(chunks)-1)){
-print(c)
-t.DEM.BedShear_X=extract(a, data.frame(round(data[chunks[c]:(chunks[c+1]-1),]$X,2), round(data[chunks[c]:(chunks[c+1]-1),]$Y,2)), method='bilinear')
-if (c==1) {DEM.BedShear_X = t.DEM.BedShear_X} else{DEM.BedShear_X[chunks[c]:(chunks[c+1]-1)] = t.DEM.BedShear_X}
-}
-rm(t.DEM.BedShear_X)
-gc()
-
-print("Bed_Shear_Y")
-a=rasterize(data.frame(round(results$X,3), round(results$Y,3)), r, field=results$BedShear_Y)
-for (c in 1:(length(chunks)-1)){
-print(c)
-t.DEM.BedShear_Y=extract(a, data.frame(round(data[chunks[c]:(chunks[c+1]-1),]$X,2), round(data[chunks[c]:(chunks[c+1]-1),]$Y,2)), method='bilinear')
-if (c==1) {DEM.BedShear_Y = t.DEM.BedShear_Y} else{DEM.BedShear_Y[chunks[c]:(chunks[c+1]-1)] = t.DEM.BedShear_Y}
-}
-
-rm(t.DEM.BedShear_Y)
-gc()
-DEM.Vorticity = DEM.BedShear_Y*0
-#print("Vorticity")
-#a=rasterize(data.frame(round(results$X,3), round(results$Y,3)), r, field=results$Vorticity)
-#for (c in 1:(length(chunks)-1)){
-#print(c)
-#t.DEM.Vorticity=extract(a, data.frame(round(data[chunks[c]:(chunks[c+1]-1),]$X,2), round(data[chunks[c]:(chunks[c+1]-1),]$Y,2)), method='bilinear')
-#if (c==1) {DEM.Vorticity = t.DEM.Vorticity} else{DEM.Vorticity[chunks[c]:(chunks[c+1]-1)] = t.Vorticity}
-#}
-
-
-###################################################################
-} # end "if 1==1"
 
 
 delta = round(max(abs(results$X[2]-results$X[1]), abs(results$Y[2]-results$Y[1])), 1)+.01
@@ -602,9 +652,9 @@ DEM.WSE[nn.DEM$nn.dists[,1] > delta| is.na(DEM.X.Velocity)] = -9999
 
 # DEM.WSE[DEM.Depth == 0] = -9999
 
-DEM.BedShear_X[nn.DEM$nn.dists[,1] > delta| is.na(DEM.BedShear_X)] = -9999
-DEM.BedShear_Y[nn.DEM$nn.dists[,1] > delta| is.na(DEM.BedShear_Y)] = -9999
-DEM.Vorticity[nn.DEM$nn.dists[,1] > delta| is.na(DEM.Vorticity)] = -9999
+#DEM.BedShear_X[nn.DEM$nn.dists[,1] > delta| is.na(DEM.BedShear_X)] = -9999
+#DEM.BedShear_Y[nn.DEM$nn.dists[,1] > delta| is.na(DEM.BedShear_Y)] = -9999
+#DEM.Vorticity[nn.DEM$nn.dists[,1] > delta| is.na(DEM.Vorticity)] = -9999
 
 WSE.idx = nn2(WSEDEM[,1:2], data[,1:2],1)$nn.idx
 DEM.WSEDEM = WSEDEM[,3][WSE.idx]
@@ -624,8 +674,8 @@ DEM.Results = data.frame(
 , 
 "WSE"=DEM.WSE, 
 "BedLevel" = DEM.BedLevel,
-"BedShear_X" = DEM.BedShear_X, "BedShear_Y" =  DEM.BedShear_Y,
-"Vorticity" = DEM.Vorticity,
+#"BedShear_X" = DEM.BedShear_X, "BedShear_Y" =  DEM.BedShear_Y,
+#"Vorticity" = DEM.Vorticity,
 "Depth.Error"= DEM.Depth.Error
  )
 
@@ -635,9 +685,9 @@ rm(DEM.X.Velocity)
 rm(DEM.Y.Velocity)
 rm(DEM.Velocity.Magnitude)
 rm(DEM.Depth)
-rm(DEM.BedShear_X)
-rm(DEM.BedShear_Y)
-rm(DEM.Vorticity)
+#rm(DEM.BedShear_X)
+#rm(DEM.BedShear_Y)
+#rm(DEM.Vorticity)
 rm(DEM.Depth.Error)
 gc()
 
@@ -648,22 +698,11 @@ DEM.Results = DEM.Results[((DEM.Results$Depth > 0) & (abs(DEM.Results$Depth.Erro
 DEM.Results = DEM.Results[DEM.Results$BedLevel > -9999,]
 
 # Write DEM Grid Output File!
-#sub.folder = paste(results.folder,site.list$SiteID[k],"_",
-#    site.list$Year[k],"_VisitID_",site.list$VisitID[k],"/",sep="")
-
-#sub.folder = site.list$Directory[k]
-#sub.folder = gsub("HydroModelInputs/artifacts/","",sub.folder)
-#sub.folder = paste(sub.folder, "HydroModelResults/", sep="")
-
 sub.folder = site.list$Results.Folder[k]
 sub.folder
 
 
 dir.create(sub.folder)
-
-#write.csv(DEM.Results, paste(sub.folder,"DEM_GRID_",
-#   site.list$SiteID[k],"_",site.list$Year[k],"VisitID_",site.list$VisitID[k],"_Delft3D_Results.csv", sep=""), row.names=F)
-
 
 write.csv(DEM.Results, paste(sub.folder,"dem_grid_results.csv",sep=""), row.names=F)
 
@@ -739,7 +778,7 @@ colorp
 j=12
 j=7
 j=3
-for (j in 3:12) {
+for (j in 3:9) {
 print(j)
 
 jpeg(
