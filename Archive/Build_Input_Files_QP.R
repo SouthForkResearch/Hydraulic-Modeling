@@ -5,8 +5,7 @@
 # Updated 6_23_2015
 ##########################################################
 
-Build.Input.File.R.Version = 1.1 
-# 1.1 makes changes to enable using vs.exe instead of Quickplot to pull data from trim_test.dat
+Build.Input.File.R.Version = 1.0
 Delft3D.Version = "4.01.00.rc.02"
 Operator = "Matt Nahorniak"
 
@@ -173,8 +172,6 @@ site.index
 k=site.index[1]
 k
 
-
-if (1==2) {
 ######################################################################################################
 # Write matlat macro file.  This will be used after running the Delft3D code to convert the
 # Delft 3D output to text files which can be read by the post-processing R scripts.  The quickplot
@@ -231,53 +228,6 @@ append=T)
 
 #### Done looping through sites to build post-processing macro "quickplot_marco.m"
 ###########################################################################################
-} # end of i (1==2) to skip the above section 
-
-######################################################################################################
-# Write vs.bat file.  This will be used after running the Delft3D code to convert the
-# Delft 3D output to text files which can be read by the post-processing R scripts.  
-
-# Start a new macro file....
-cat("path C:\\Matt-SFR Files\\Delft3D\\Delft3D_Updated\\delft3d_ohmw_4.01.00.rc.02\\delft3d\\win32\\util\\bin
-", file = "vs.bat")
-
-# Looping Through All Sites for which we need to build input files
-
-# Note that this will build input files for ALL sites in the specified directory.  To run just
-# a subset of sites, comment out the "for (k in site.index) {" line and re-rewite it to inly
-# run the index list you want to run.  
-
-for (k in site.index) {
-WorkingDir = as.character(site.list$D3D.Input.Folder[k])
-
-
-# Set the working directory
-wd = paste(WorkingDir,"/", sep="")
-
-
-# Write the macro steps for this site.  This macro will generate output files for:
-# depth averaged velocity, water depth, bed shear strewss, water level, vorticity.  
-# Each output file also contains X and Y locations by default
-cat("chdir ", wd,"
-del U_Vel.tkl
-del V_Vel.tkl
-del Active.tkl
-del Bot_Depth.tkl
-del X_Coor.tkl
-del Y_Coor.tkl
-del Water_Level.tkl
-SET PAGER=more
-vs <test.vsb
-",
-sep="",
-file = "vs.bat",
-append=T)
-}
-
-
-#### Done looping through sites to build post-processing vs.bat"
-##########################################################################################
-
 
 ###########################################################################################
 # Loop through sites to build batch file to run all simulations in batch mode
@@ -538,29 +488,12 @@ deast = abs(inletX-maxX)
 dnorth = abs(inletY-maxY)
 dsouth = abs(inletY-minY)
 
-#Inlet boundary manual corrections
+
 if (site.list$SiteID[k]== "LEM00002-00001B") {dsouth = 0}
 if (site.list$SiteID[k]== "CBW05583-029535") {dwest = 0}
 if (site.list$SiteID[k]== "CBW05583-515058_ModifiedDEM") {dsouth=0}
 if (site.list$SiteID[k]== "ENT201301-TyeeSide") {dwest = 0}
 if (site.list$SiteID[k]== "ENT00001-1BC11") {dwest = 0}
-if (site.list$SiteID[k]== "ENT00001-1E1") {dnorth=0}
-if (site.list$SiteID[k]== "CBW05583-021738") {dwest=0}
-if (site.list$SiteID[k]== "OJD03458-000140") {dwest=0}
-if (site.list$SiteID[k]== "CBW05583-394703") {dNorth=0}
-if (site.list$SiteID[k]== "CBW05583-121695") {dnorth=0}
-if (site.list$SiteID[k]== "CBW05583-193375") {dNorth=0}
-if (site.list$SiteID[k]== "CBW05583-128719") {deast=0}
-if (site.list$SiteID[k]== "CBW05583-418255") {dnorth=0}
-if (site.list$SiteID[k]== "CBW05583-040217") {dwest=0}
-if (site.list$SiteID[k]== "CBW05583-042521") {dnorth=0}
-if (site.list$SiteID[k]== "CBW05583-344746") {deast=0}
-if (site.list$SiteID[k]== "MNM00001-M53247") {dsouth=0}
-if (site.list$SiteID[k]== "CBW05583-235154") {dwest=0}
-if (site.list$SiteID[k]== "CBW05583-401362") {deast=0}
-if (site.list$SiteID[k]== "CBW05583-206314") {deast=0}
-if (site.list$SiteID[k]== "CBW05583-492715") {dsouth=0}
-if (site.list$SiteID[k]== "MET00002-TR3_1") {dwest=0}
 
  
 
@@ -616,7 +549,7 @@ dnorth = abs(outletY-maxY)
 dsouth = abs(outletY-minY)
 
 ###################################################
-# A few sites, so far, have broken the code!  Manually outlet for boundaries for
+# A few sites, so far, have broken the code!  Manually for boundaries for
 # The following!
 
 if (site.list$SiteID[k]== "CBW05583-086186") {dwest = 0}
@@ -625,12 +558,6 @@ if (site.list$SiteID[k]== "CBW05583-232818") {dnorth = 0}
 if (site.list$SiteID[k]== "CBW05583-312265") {dsouth = 0}
 if (site.list$SiteID[k]== "LEM00001-Little0Springs-2") {dnorth = 0}
 if (site.list$SiteID[k]== "LEM00002-00001B") {dnorth = 0}
-if (site.list$SiteID[k]== "ENT00001-1D4") {dsouth=0}
-if (site.list$SiteID[k]== "CBW05583-048847") {dwest=0}
-if (site.list$SiteID[k]== "CBW05583-042521") {dsouth=0}
-if (site.list$SiteID[k]== "MNM00001-000009") {dwest=0}
-
-
 #####################################################
 if (min(dwest, deast, dnorth, dsouth)==dwest) {
 minX = outletX + slop
@@ -1655,39 +1582,6 @@ meta.data = list(
 names(site.list)
 write.csv(meta.data,paste(site.list$D3D.Input.Folder[k],"/Meta.Data.csv", sep=""))
 
-###############################
-# Write .bat file to pull out results using vs.exe
-cat("use trim-test.dat def trim-test.def
-
-let Var_001 = KCS             (1,",N+1,",1;1,",M+1,",1) from map-const       (1,1,1)
-write Var_001 to Active.tkl
-
-let Var_002 = DPS0            (1,",N+1,",1;1,",M+1,",1) from map-const       (1,1,1)
-write Var_002 to Bot_Depth.tkl
-
-let Var_003 = YZ              (1,",N+1,",1;1,",M+1,",1) from map-const       (1,1,1)
-write Var_003 to Y_Coor.tkl
-
-let Var_004 = XZ              (1,",N+1,",1;1,",M+1,",1) from map-const       (1,1,1)
-write Var_004 to X_Coor.tkl
-
-let Var_005 = S1              (1,",N+1,",1;1,",M+1,",1) from map-series      (11,11,11)
-write Var_005 to Water_Level.tkl
-
-let Var_006 = V1              (1,",N+1,",1;1,",M+1,",1) from map-series      (11,11,11)
-write Var_006 to V_Vel.tkl
-
-let Var_007 = U1              (1,",N+1,",1;1,",M+1,",1) from map-series      (11,11,11)
-write Var_007 to U_vel.tkl
-
-Quit",
-file= "test.vsb")
-
-
-###############################
-
-
-
 
 WorkingDir
 }
@@ -1695,5 +1589,5 @@ WorkingDir
 # Done!
 # Files should be ready to run in Delft 3D.
 
-setwd(savedwd)
 
+setwd(savedwd)
