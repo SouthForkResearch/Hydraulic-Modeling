@@ -600,6 +600,8 @@ if (site.list$SiteID[k]== "CBW05583-401362") {deast=0}
 if (site.list$SiteID[k]== "CBW05583-206314") {deast=0}
 if (site.list$SiteID[k]== "CBW05583-492715") {dsouth=0}
 if (site.list$SiteID[k]== "MET00002-TR3_1") {dwest=0}
+if (site.list$SiteID[k]== "CBW05583-489131") {deast = 0}
+if (site.list$SiteID[k]== "CBW05583-186002") {dsouth = 0}
 
 dsouth
 deast
