@@ -1462,9 +1462,10 @@ pp.porosity = jam_porosity$Porosity_Pct[pp.porosity.idx]
 # dial in a function that kind've sort've works here!
 
 # added .5* for low friction run
+# added .25 for very low friction run
 # added 2* for medium friction run
 # added 4* for high friction run
-pp.friction =0.5*0.1*(100-pp.porosity)
+pp.friction =0.25*0.1*(100-pp.porosity)
 pp.friction
 jpeg(paste(QA.folder,"porous_plates.jpg",sep=""), 6,6, units='in', res=600)
 ################################################################

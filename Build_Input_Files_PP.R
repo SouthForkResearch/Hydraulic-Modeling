@@ -679,6 +679,7 @@ if (site.list$SiteID[k]== "MNM00001-000009") {dwest=0}
 if (site.list$SiteID[k]== "CBW05583-442266") {dnorth=0}
 if (site.list$SiteID[k]== "CBW05583-019199") {dnorth = 0} 
 if (site.list$SiteID[k]== "CBW05583-393497") {deast = 0} 
+if (site.list$SiteID[k]== "AEM001-UpperWhitePine_Control") {deast = 0} 
 
 
 #####################################################
