@@ -637,6 +637,7 @@ if (site.list$SiteID[k]== "YFI00001-002166") {dsouth=0}
 if (site.list$SiteID[k]== "AEM001-NewsomeCreek_Treatment") {dsouth = 0}
 # New 11_15_16
 if (site.list$SiteID[k]== "AEM001-Toppenish_Levee_Control") {dnorth = 0} 
+if (site.list$SiteID[k]== "AEM001-RedRiverMeanders_Control") {deast = 0} 
 
 
 #####################################################
@@ -1167,23 +1168,51 @@ cat(simtime, outflow.ws.level,"  ",outflow.ws.level,"\n", file=  "test.bct",appe
 # I've found tht specifying an inlet flow boundary condition tends to crash Delft3D
 # When I start with an empty channel.  This seems to work just fine.
 
+
+
 if (inlet=="south") {
-inlet.x = (1:NX)[Wdepth[,2] > 0]
+a=nn2(WSEDEM[,1:2],data.frame(GridX[,2],GridY[,2]),1)
+b=nn2(data[,1:2],data.frame(GridX[,2],GridY[,2]),1)
+inlet.depth = WSEDEM[a$nn.idx,3]-data[b$nn.idx,3]
+inlet.depth[a$nn.dists > .11] = 0
+inlet.depth[inlet.depth < 0] = 0
+inlet.x = (1:NX)[inlet.depth > 0]
 if (length(inlet.x) == 0) {inlet.y=(1:NX)[depth[2,]==max(depth[2,])]}
 inlet.y = rep(2, length(inlet.x))}
 
 if (inlet=="north") {
-inlet.x = (1:NX)[Wdepth[,(NY-1)] > 0]
+a=nn2(WSEDEM[,1:2],data.frame(GridX[,(NY-1)],GridY[,(NY-1)]),1)
+b=nn2(data[,1:2],data.frame(GridX[,(NY-1)],GridY[,(NY-1)]),1)
+inlet.depth = WSEDEM[a$nn.idx,3]-data[b$nn.idx,3]
+inlet.depth[a$nn.dists > .11] = 0
+inlet.depth[inlet.depth < 0] = 0
+
+inlet.x = (1:NX)[inlet.depth > 0]
 if (length(inlet.x) == 0) {inlet.y=(1:NX)[depth[(NY-1),]==max(depth[(NY-1),])]}
 inlet.y = rep((NY-1), length(inlet.x))}
 
 if (inlet=="west") {
-inlet.y = (1:NY)[Wdepth[2,] > 0]
+a=nn2(WSEDEM[,1:2],data.frame(GridX[2,],GridY[2,]),1)
+b=nn2(data[,1:2],data.frame(GridX[2,],GridY[2,]),1)
+inlet.depth = WSEDEM[a$nn.idx,3]-data[b$nn.idx,3]
+inlet.depth[a$nn.dists > .11] = 0
+inlet.depth[inlet.depth < 0] = 0
+
+inlet.y = (1:NY)[inlet.depth > 0]
 if (length(inlet.y) == 0) {inlet.y=(1:NY)[depth[2,]==max(depth[2,])]}
 inlet.x = rep(2, length(inlet.y))}
 
+dim(Wdepth)
+
+
 if (inlet=="east") {
-inlet.y = (1:NY)[Wdepth[(NX-1),] > 0]
+a=nn2(WSEDEM[,1:2],data.frame(GridX[(NX-1),],GridY[(NX-1),]),1)
+b=nn2(data[,1:2],data.frame(GridX[(NX-1),],GridY[(NX-1),]),1)
+inlet.depth = WSEDEM[a$nn.idx,3]-data[b$nn.idx,3]
+inlet.depth[a$nn.dists > .11] = 0
+inlet.depth[inlet.depth < 0] = 0
+
+inlet.y = (1:NY)[inlet.depth > 0]
 # if all points dry, assign inlet as lowest point 
 if (length(inlet.y) == 0) {inlet.y=(1:NY)[depth[(NX-1),]==max(depth[(NX-1),])]}
 
