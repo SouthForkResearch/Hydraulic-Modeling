@@ -564,12 +564,11 @@ if (site.list$SiteID[k]== "MET00002-TR3_1") {dwest=0}
 if (site.list$SiteID[k]== "CBW05583-489131") {deast = 0}
 if (site.list$SiteID[k]== "CBW05583-186002") {dsouth = 0} 
 if (site.list$SiteID[k]== "CBW05583-019199") {dsouth = 0} 
+# New 11_15_16
+if (site.list$SiteID[k]== "AEM001-NewsomeCreek_Treatment") {dnorth = 0} 
+if (site.list$SiteID[k]== "AEM001-RedRiverMeanders_Control") {deast = 0} 
 
-if (site.list$SiteID[k]== "CBW05583-160191") {dnorth = 0} 
-if (site.list$SiteID[k]== "CBW05583-012569") {dwest = 0} 
-if (site.list$SiteID[k]== "CBW05583-393497") {dwest = 0} 
-
-
+AEM001-RedRiverMeanders_Control
 # Use the minimum distance to define inlet side. Cut some "slop" off the DEM grid to create the
 # actual computational grid, to ensure the computation inlet boundary entirely cross the inlet of
 # the stream.
@@ -635,10 +634,10 @@ if (site.list$SiteID[k]== "ENT00001-1D4") {dsouth=0}
 if (site.list$SiteID[k]== "CBW05583-048847") {dwest=0}
 if (site.list$SiteID[k]== "CBW05583-042521") {dsouth=0}
 if (site.list$SiteID[k]== "MNM00001-000009") {dwest=0}
-if (site.list$SiteID[k]== "CBW05583-442266") {dnorth=0}
-if (site.list$SiteID[k]== "CBW05583-019199") {dnorth = 0} 
-if (site.list$SiteID[k]== "CBW05583-393497") {deast = 0} 
-if (site.list$SiteID[k]== "AEM001-UpperWhitePine_Control") {deast = 0} 
+if (site.list$SiteID[k]== "YFI00001-002166") {dsouth=0}
+if (site.list$SiteID[k]== "AEM001-NewsomeCreek_Treatment") {dsouth = 0}
+# New 11_15_16
+if (site.list$SiteID[k]== "AEM001-Toppenish_Levee_Control") {dnorth = 0} 
 
 
 #####################################################
@@ -1171,12 +1170,12 @@ cat(simtime, outflow.ws.level,"  ",outflow.ws.level,"\n", file=  "test.bct",appe
 
 if (inlet=="south") {
 inlet.x = (1:NX)[Wdepth[,2] > 0]
-if (length(inlet.x) == 0) {inlet.x=(1:NX)[depth[,2]==max(depth[,2])]}
+if (length(inlet.x) == 0) {inlet.y=(1:NX)[depth[2,]==max(depth[2,])]}
 inlet.y = rep(2, length(inlet.x))}
 
 if (inlet=="north") {
 inlet.x = (1:NX)[Wdepth[,(NY-1)] > 0]
-if (length(inlet.x) == 0) {inlet.x=(1:NX)[depth[,(NY-1)]==max(depth[,(NY-1)])]}
+if (length(inlet.x) == 0) {inlet.y=(1:NX)[depth[(NY-1),]==max(depth[(NY-1),])]}
 inlet.y = rep((NY-1), length(inlet.x))}
 
 if (inlet=="west") {
