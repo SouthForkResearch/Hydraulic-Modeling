@@ -568,7 +568,6 @@ if (site.list$SiteID[k]== "CBW05583-019199") {dsouth = 0}
 if (site.list$SiteID[k]== "AEM001-NewsomeCreek_Treatment") {dnorth = 0} 
 if (site.list$SiteID[k]== "AEM001-RedRiverMeanders_Control") {deast = 0} 
 
-AEM001-RedRiverMeanders_Control
 # Use the minimum distance to define inlet side. Cut some "slop" off the DEM grid to create the
 # actual computational grid, to ensure the computation inlet boundary entirely cross the inlet of
 # the stream.
