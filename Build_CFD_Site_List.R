@@ -54,6 +54,10 @@ MVI = read.csv("MetricVisitInformation.csv", header=T)
 idx = match(VisitIDs, MVI$VisitID)
 idx
 
+
+
+
+
 names(MVI)
 CFD_SiteList = data.frame(
 "SiteID"=MVI$SiteName[idx],
@@ -66,9 +70,16 @@ CFD_SiteList = data.frame(
 "Year"=MVI$VisitYear[idx],
 "WatershedName"=MVI$WatershedName[idx],
 "VisitID" = VisitIDs,
-"Trim Length" = rep(2, length(idx)),
+"Trim.Length" = rep(2, length(idx)),
 "HEV" = rep(.01, length(idx)),
 "DeltaBC" = rep(0, length(idx)))
+
+# replace trim lengths with those in file "TrimLengths.csv")
+TrimLengths = read.csv("TrimLengths.csv", header=T)
+idx=match(CFD_SiteList$SiteID,TrimLengths$SiteName)
+CFD_SiteList$Trim.Length= TrimLengths$Trim.Length[idx]
+CFD_SiteList$Trim.Length[is.na(CFD_SiteList$Trim.Length)] = 2
+
 
 #Remove spaces from SiteID
 CFD_SiteList$SiteID = gsub(" ","", CFD_SiteList$SiteID)
