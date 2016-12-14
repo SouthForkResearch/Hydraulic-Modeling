@@ -575,6 +575,7 @@ deast = abs(inletX-maxX)
 dnorth = abs(inletY-maxY)
 dsouth = abs(inletY-minY)
 
+
 #Inlet boundary manual corrections
 if (site.list$SiteID[k]== "CBW05583-515058_ModifiedDEM") {dsouth=0}
 if (site.list$SiteID[k]== "CBW05583-515058_ModifiedDEM") {dsouth=0}
@@ -1461,11 +1462,11 @@ pp.porosity = jam_porosity$Porosity_Pct[pp.porosity.idx]
 #9/12/2016 - This is a wild guess.  We can use this to try to
 # dial in a function that kind've sort've works here!
 
-# added .5* for low friction run
-# added .25 for very low friction run
-# added 2* for medium friction run
-# added 4* for high friction run
-pp.friction =0.25*0.1*(100-pp.porosity)
+# added .5*.1 for low friction run
+# added .25*.1 for very low friction run
+# added 2*.1 for medium friction run
+# added 4*.1 for high friction run
+pp.friction =0.5*0.1*(100-pp.porosity)
 pp.friction
 jpeg(paste(QA.folder,"porous_plates.jpg",sep=""), 6,6, units='in', res=600)
 ################################################################

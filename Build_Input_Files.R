@@ -642,7 +642,8 @@ if (site.list$SiteID[k]== "AEM001-RedRiverMeanders_Control") {deast = 0}
 # New 11_28_2016
 if (site.list$SiteID[k]== "CBW05583-189385") {dsouth = 0} 
 if (site.list$SiteID[k]== "WENMASTER-000263") {deast = 0} 
-
+# New 12_14_16
+if (site.list$SiteID[k]== "CBW05583-293547") {deast = 0} 
 
 #####################################################
 if (min(dwest, deast, dnorth, dsouth)==dwest) {
