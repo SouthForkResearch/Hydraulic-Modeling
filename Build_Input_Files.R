@@ -568,6 +568,9 @@ if (site.list$SiteID[k]== "CBW05583-019199") {dsouth = 0}
 if (site.list$SiteID[k]== "AEM001-NewsomeCreek_Treatment") {dnorth = 0} 
 if (site.list$SiteID[k]== "AEM001-RedRiverMeanders_Control") {deast = 0} 
 if (site.list$SiteID[k]== "AEM001-UpperWhitePine_Treatment") {dwest = 0} 
+# New 1_6_2017
+if (site.list$SiteID[k]== "ENT00001-1G2") {dwest = 0} 
+
 
 # Use the minimum distance to define inlet side. Cut some "slop" off the DEM grid to create the
 # actual computational grid, to ensure the computation inlet boundary entirely cross the inlet of
@@ -644,6 +647,12 @@ if (site.list$SiteID[k]== "CBW05583-189385") {dsouth = 0}
 if (site.list$SiteID[k]== "WENMASTER-000263") {deast = 0} 
 # New 12_14_16
 if (site.list$SiteID[k]== "CBW05583-293547") {deast = 0} 
+# New 1_5_2017
+if (site.list$SiteID[k]== "ENT00001-2A9") {deast=0}
+if (site.list$SiteID[k]== "ENT00001-2C10") {dsouth=0}
+if (site.list$SiteID[k]== "ENT00001-3A2") {dsouth=0}
+
+
 
 #####################################################
 if (min(dwest, deast, dnorth, dsouth)==dwest) {
