@@ -74,6 +74,8 @@ CFD_SiteList = data.frame(
 "HEV" = rep(.01, length(idx)),
 "DeltaBC" = rep(0, length(idx)))
 
+setwd(saved_dir)
+dir()
 # replace trim lengths with those in file "TrimLengths.csv")
 TrimLengths = read.csv("TrimLengths.csv", header=T)
 idx=match(CFD_SiteList$SiteID,TrimLengths$SiteName)
