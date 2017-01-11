@@ -75,7 +75,6 @@ CFD_SiteList = data.frame(
 "DeltaBC" = rep(0, length(idx)))
 
 setwd(saved_dir)
-dir()
 # replace trim lengths with those in file "TrimLengths.csv")
 TrimLengths = read.csv("TrimLengths.csv", header=T)
 idx=match(CFD_SiteList$SiteID,TrimLengths$SiteName)
@@ -101,6 +100,7 @@ CFD_SiteList$Measured.Discharge[is.na(CFD_SiteList$Measured.Discharge)==T]=0
 CFD_SiteList$Modeled.Discharge[is.na(CFD_SiteList$Modeled.Discharge)==T]=0
 
 
+setwd("C:/Matt-SFR Files/Hydraulic Modeling/R Code to Build Input Files")
 
 write.csv(CFD_SiteList,"CFD_Site_List.csv")
 CFD_SiteList
