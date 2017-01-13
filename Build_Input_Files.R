@@ -570,6 +570,8 @@ if (site.list$SiteID[k]== "AEM001-RedRiverMeanders_Control") {deast = 0}
 if (site.list$SiteID[k]== "AEM001-UpperWhitePine_Treatment") {dwest = 0} 
 # New 1_6_2017
 if (site.list$SiteID[k]== "ENT00001-1G2") {dwest = 0} 
+# New 1_13_2017
+if (site.list$SiteID[k]== "MNM00001-000096") {dsouth = 0} 
 
 
 # Use the minimum distance to define inlet side. Cut some "slop" off the DEM grid to create the
