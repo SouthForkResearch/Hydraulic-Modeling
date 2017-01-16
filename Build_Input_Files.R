@@ -654,6 +654,8 @@ if (site.list$SiteID[k]== "ENT00001-2A9") {deast=0}
 if (site.list$SiteID[k]== "ENT00001-2C10") {dsouth=0}
 if (site.list$SiteID[k]== "ENT00001-3A2") {dsouth=0}
 
+# New 1_16_17
+if (site.list$SiteID[k]== "CBW05583-344746") {dnorth=0}
 
 
 #####################################################
