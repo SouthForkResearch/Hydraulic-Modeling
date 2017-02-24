@@ -577,6 +577,8 @@ dsouth = abs(inletY-minY)
 
 
 #Inlet boundary manual corrections
+if (site.list$SiteID[k]== "CBW05583-515058_ModifiedDEM") {dsouth=0}
+if (site.list$SiteID[k]== "CBW05583-515058_ModifiedDEM") {dsouth=0}
 if (site.list$SiteID[k]== "LEM00002-00001B") {dsouth = 0}
 if (site.list$SiteID[k]== "CBW05583-029535") {dwest = 0}
 if (site.list$SiteID[k]== "CBW05583-515058_ModifiedDEM") {dsouth=0}
@@ -600,19 +602,15 @@ if (site.list$SiteID[k]== "CBW05583-206314") {deast=0}
 if (site.list$SiteID[k]== "CBW05583-492715") {dsouth=0}
 if (site.list$SiteID[k]== "MET00002-TR3_1") {dwest=0}
 if (site.list$SiteID[k]== "CBW05583-489131") {deast = 0}
-if (site.list$SiteID[k]== "CBW05583-186002") {dsouth = 0} 
+if (site.list$SiteID[k]== "CBW05583-186002") {dsouth = 0}
 if (site.list$SiteID[k]== "CBW05583-019199") {dsouth = 0} 
-# New 11_15_16
-if (site.list$SiteID[k]== "AEM001-NewsomeCreek_Treatment") {dnorth = 0} 
-if (site.list$SiteID[k]== "AEM001-RedRiverMeanders_Control") {deast = 0} 
-if (site.list$SiteID[k]== "AEM001-UpperWhitePine_Treatment") {dwest = 0} 
-# New 1_6_2017
-if (site.list$SiteID[k]== "ENT00001-1G2") {dwest = 0} 
-# New 1_13_2017
-if (site.list$SiteID[k]== "MNM00001-000096") {dsouth = 0} 
+if (site.list$SiteID[k]== "CBW05583-160191") {dnorth = 0} 
+if (site.list$SiteID[k]== "CBW05583-012569") {dwest = 0} 
+if (site.list$SiteID[k]== "CBW05583-393497") {dwest = 0}
 
 
-
+dsouth
+deast
 # Use the minimum distance to define inlet side. Cut some "slop" off the DEM grid to create the
 # actual computational grid, to ensure the computation inlet boundary entirely cross the inlet of
 # the stream.
@@ -667,6 +665,8 @@ dsouth = abs(outletY-minY)
 ###################################################
 # A few sites, so far, have broken the code!  Manually outlet for boundaries for
 # The following!
+
+
 if (site.list$SiteID[k]== "CBW05583-086186") {dwest = 0}
 if (site.list$SiteID[k]== "CBW05583-142490") {dnorth = 0}
 if (site.list$SiteID[k]== "CBW05583-232818") {dnorth = 0}
@@ -677,23 +677,10 @@ if (site.list$SiteID[k]== "ENT00001-1D4") {dsouth=0}
 if (site.list$SiteID[k]== "CBW05583-048847") {dwest=0}
 if (site.list$SiteID[k]== "CBW05583-042521") {dsouth=0}
 if (site.list$SiteID[k]== "MNM00001-000009") {dwest=0}
-if (site.list$SiteID[k]== "YFI00001-002166") {dsouth=0}
-if (site.list$SiteID[k]== "AEM001-NewsomeCreek_Treatment") {dsouth = 0}
-# New 11_15_16
-if (site.list$SiteID[k]== "AEM001-Toppenish_Levee_Control") {dnorth = 0} 
-if (site.list$SiteID[k]== "AEM001-RedRiverMeanders_Control") {deast = 0} 
-# New 11_28_2016
-if (site.list$SiteID[k]== "CBW05583-189385") {dsouth = 0} 
-if (site.list$SiteID[k]== "WENMASTER-000263") {deast = 0} 
-# New 12_14_16
-if (site.list$SiteID[k]== "CBW05583-293547") {deast = 0} 
-# New 1_5_2017
-if (site.list$SiteID[k]== "ENT00001-2A9") {deast=0}
-if (site.list$SiteID[k]== "ENT00001-2C10") {dsouth=0}
-if (site.list$SiteID[k]== "ENT00001-3A2") {dsouth=0}
-
-# New 1_16_17
-if (site.list$SiteID[k]== "CBW05583-344746") {dnorth=0}
+if (site.list$SiteID[k]== "CBW05583-442266") {dnorth=0}
+if (site.list$SiteID[k]== "CBW05583-019199") {dnorth = 0} 
+if (site.list$SiteID[k]== "CBW05583-393497") {deast = 0} 
+if (site.list$SiteID[k]== "AEM001-UpperWhitePine_Control") {deast = 0} 
 
 
 #####################################################
@@ -1446,42 +1433,31 @@ for (r in 1:rows) {
 
 ###########################################
 ######### New Porous Plate Stuff 9_12_2016 ############3
-#if (("Jam_Locations.csv" %in% dir(WorkingDir))) {
-if (1==1) {
+if (("Jam_Locations.csv" %in% dir(WorkingDir))) {
 
 dir(WorkingDir)
-#pp = read.csv(paste(WorkingDir,"/Jam_Locations.csv",sep=""), header=T)
-pp = read.csv("C:/Matt-SFR Files/Hydraulic Modeling/Asotin Porous Structures 1_30_17/AsotinStuctureLocs_with_porosity.csv",header=T)
-
-# Note - need to get ride of spaces in names in pp (applies to some sites in Asotin, maybe others
-pp = pp[gsub(" ","",pp$Site_Name)==site.list$SiteID[k],]
-
-site.list$SiteID[k]
-nrow(pp)
-#herenow!
-names(pp)
-#jam_porosity =  read.csv(paste(WorkingDir,"/Jam_Porosity.csv",sep=""), header=T)
+pp = read.csv(paste(WorkingDir,"/Jam_Locations.csv",sep=""), header=T)
+jam_porosity =  read.csv(paste(WorkingDir,"/Jam_Porosity.csv",sep=""), header=T)
 
 
 names(pp)
 ########
 
 
-data.frame(pp$X, pp$Y)
-#pp.nn = nn2(as.data.frame(pp[,1:2]),as.data.frame(data[,1:2]),1)
-pp.nn = nn2(data.frame(pp$X,pp$Y),as.data.frame(data[,1:2]),1)
+
+pp.nn = nn2(as.data.frame(pp[,1:2]),as.data.frame(data[,1:2]),1)
 
 pp.nn$nn.idx
 
 pp.x = data$X[pp.nn$nn.dists < .11]
 pp.y = data$Y[pp.nn$nn.dists < .11]
-pp.porosity = pp$Porosity[pp.nn$nn.idx[pp.nn$nn.dists < .11]]
 
+plot(pp.x, pp.y, pch=19, cex=.1)
 
-#pp.id = pp[,3][pp.nn$nn.idx[pp.nn$nn.dists < .11]]
-#
-#pp.porosity.idx = match(pp.id, jam_porosity$Jam)
-#pp.porosity = jam_porosity$Porosity_Pct[pp.porosity.idx]
+pp.id = pp[,3][pp.nn$nn.idx[pp.nn$nn.dists < .11]]
+
+pp.porosity.idx = match(pp.id, jam_porosity$Jam)
+pp.porosity = jam_porosity$Porosity_Pct[pp.porosity.idx]
 
 #Convert porosity into a friction factor for porous plate
 #9/12/2016 - This is a wild guess.  We can use this to try to
@@ -1492,7 +1468,6 @@ pp.porosity = pp$Porosity[pp.nn$nn.idx[pp.nn$nn.dists < .11]]
 # added 1*.1 for "default" friction run
 # added 2*.1 for medium friction run
 # added 4*.1 for high friction run
-# Use .5*.1=.05 as the "default" based on initial sensitivity analysis
 pp.friction =.5*0.1*(100-pp.porosity)
 pp.friction
 jpeg(paste(QA.folder,"porous_plates.jpg",sep=""), 6,6, units='in', res=600)
@@ -1533,14 +1508,27 @@ dev.off()
 Xs=seq(min(GridX), max(GridX), by=DX)
 Ys=seq(min(GridY), max(GridY), by=DX)
 
-pp.m=match(round(pp.x,2), round(Xs,2))
-pp.n=match(round(pp.y,2), round(Ys,2))
-
+pp.x
+Xs
+pp.y
+Ys
+?match
+pp.x
+Xs
+?round
+round(pp.x, .1)
+round(Xs, 1)
+pp.m=match(round(pp.x,2), round(Xs, 2))
+pp.n=match(round(pp.y,2),round(Ys,2))
+pp.m
+pp.n
 idx.mn = complete.cases(data.frame(pp.m, pp.n))
-
 pp.m = pp.m[idx.mn]
 pp.n = pp.n[idx.mn]
 pp.friction = pp.friction[idx.mn]
+
+length(pp.m)
+length(pp.x)/16
 
 #for (i in 1:length(pp.m)){
 #points(GridX[pp.m[i], pp.n[i]], GridY[pp.m[i],pp.n[i]],col="brown")
@@ -1913,8 +1901,8 @@ modDEM
 
 # If we have a porous plate input file...
 #if (("elj_locs.csv" %in% dir(WorkingDir))) {
-#if (("Jam_Locations.csv" %in% dir(WorkingDir))) {
-if (1==1){
+if (("Jam_Locations.csv" %in% dir(WorkingDir))) {
+
 # Write the mdf File!
 cat("Ident  = #Delft3D-FLOW 3.43.05.22651#
 Commnt =                  
@@ -2023,8 +2011,8 @@ file= "test.mdf")}
 
 # If we don't have a porous plate input file
 #if (("elj_locs.csv" %in% dir(WorkingDir))==FALSE) {
-#if (("Jam_Locations.csv" %in% dir(WorkingDir))==FALSE) {
-if (1==2) {
+if (("Jam_Locations.csv" %in% dir(WorkingDir))==FALSE) {
+
 #if (modDEM == FALSE) {
 # Write the mdf File!
 cat("Ident  = #Delft3D-FLOW 3.43.05.22651#
