@@ -1452,7 +1452,7 @@ pp.nn$nn.idx
 pp.x = data$X[pp.nn$nn.dists < .11]
 pp.y = data$Y[pp.nn$nn.dists < .11]
 
-plot(pp.x, pp.y, pch=19, cex=.1)
+#plot(pp.x, pp.y, pch=19, cex=.1)
 
 pp.id = pp[,3][pp.nn$nn.idx[pp.nn$nn.dists < .11]]
 
