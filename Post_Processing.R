@@ -5,7 +5,7 @@
 
 
 
-Post.Processcing.R.Code.Version = 1.1
+Post.Processing.R.Code.Version = 1.1
 # Version 1.1 used output from vs.exe rather than Quickplot. Results are exactly the same, except
 # for some imperceptable roundoff error in the 4th or 5th or more decimal.
 
@@ -55,6 +55,7 @@ N=51
 options(digits=16)
 # windows(record=T)
 library(RANN)
+library(uuid)
 #library(R.matlab)
 
 # Assign color palette for plots
@@ -153,7 +154,7 @@ setwd(paste(WorkingDir, "/", sep=""))
 
 # Read the meta.data file
 Meta.Data = read.csv(paste(WorkingDir,"/Meta.Data.csv", sep=""))
-Meta.Data$Post.Processcing.R.Code.Version = Post.Processcing.R.Code.Version
+Meta.Data$Post.Processing.R.Code.Version = Post.Processing.R.Code.Version
 Meta.Data$Post.Processing.Date.Time = Sys.time()
 
 names(site.list)
@@ -836,6 +837,137 @@ dev.off()
 
 rm(DEM.Results)
 gc()
+
+################################################################
+# Generate project.rs.xml file starting here!!!!
+################################################################
+
+all.data = read.csv("C:/Matt-SFR Files/Hydraulic Modeling/R Code to Build Input Files/R-Code/CHaMP_and_AEM_Metrics.csv",header=T)
+idx=match(Meta.Data$VisitID,all.data$VisitID)
+SiteID = all.data$SiteName[idx]
+
+DEMguid = UUIDgenerate(F)
+Realizguid = UUIDgenerate(F)
+Metadata_guid = UUIDgenerate(F)
+DEMGR_guid = UUIDgenerate(F)
+
+Discharge_Meas = Meta.Data$Measured_Discharge==Meta.Data$Discharge
+dateCreated=gsub(" ","T",Meta.Data$Post.Processing.Date.Time)
+
+
+Flow = substr(sub.folder, nchar(sub.folder)-10, nchar(sub.folder)-1)
+
+#########################################################
+# Start wriging project.rs.xml file here
+#########################################################
+
+cat("", file=paste(sub.folder,"project.rs.xml",sep=""))
+
+cat(paste("","<?xml version=\"1.0\" encoding=\"utf-8\"?>
+<Project xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"
+  xsi:noNamespaceSchemaLocation=\"XSD/V1/Project.xsd\">
+
+  <Name>My Hydraulic Output</Name>
+  <!--What's in a name. Do we need to decide on this?-->
+  <ProjectType>Hydro</ProjectType>
+
+  <MetaData>
+    <!--This first metadata exists only to place this project in the riverscapes project-->
+    <Meta name=\"Year\">",Meta.Data$Year,"</Meta>
+    <Meta name=\"Watershed\">",Meta.Data$WatershedName,"</Meta>
+    <Meta name=\"Visit\">",Meta.Data$VisitID,"</Meta>
+    <Meta name=\"Site\">",SiteID,"</Meta>
+    <Meta name=\"Flow\">",Flow,"</Meta>
+  </MetaData>
+
+  <!-- Inputs must have unique Ids that can be referenced in realizations I'm keeping
+    legible here so that it's readable in the realiations the GUID is to keep things unique-->
+  <Inputs>
+    <CSV id=\"DEM1\" guid=\"",DEMguid,"\">
+      <Name>DEM</Name>
+      <Path>DEM.csv</Path>
+      <Project>../HydroModelInputs/artifacts</Project>
+    </CSV>
+    <CSV id=\"WSEDEM1\" guid=\"",DEMguid,"\">
+      <Name>WSEDEM</Name>
+      <Path>WSEDEM.csv</Path>
+      <Project>../HydroModelInputs/artifacts</Project>
+    </CSV>
+    <CSV id=\"THALWEG1\" guid=\"",DEMguid,"\">
+      <Name>Thalweg</Name>
+      <Path>Thalweg.csv</Path>
+      <Project>../HydroModelInputs/artifacts</Project>
+    </CSV>
+  </Inputs>
+
+  <Realizations>
+    <Hydro guid=\"",Realizguid,"\" id=\"hydro1\" dateCreated=\"",dateCreated,"\" productVersion=\"",Meta.Data$Post.Processing.R.Code.Version,"\">
+      <Name>Hydraulic Model Run1</Name>
+
+      <MetaData>
+        <!--This next metadata relates to this particular realization-->
+        <Meta name=\"model\">delft3D</Meta>
+        <Meta name=\"run_datetime\">",Meta.Data$Post.Processing.Date.Time,"</Meta>
+        <Meta name=\"delft3d_version\">",Meta.Data$Delft3D.Version,"</Meta>
+        <Meta name=\"rbt_version\">",Meta.Data$rbt.version,"</Meta>
+        <Meta name=\"preprocessing_version\">",Meta.Data$Build.Input.File.R.Version,"</Meta>
+        <Meta name=\"postprocessing_version\">",Meta.Data$Post.Processing.R.Code.Version,"</Meta>
+        <Meta name=\"operator\">Matt Nahorniak</Meta>
+        <Meta name=\"run_type\">NA</Meta>
+        <Meta name=\"qa_status\">pass</Meta>
+      </MetaData>
+      <Parameters>
+        <Param name=\"surveyed_discharge\">",as.character(Discharge_Meas),"</Param>
+        <!--We need to discuss the other parameters that should go here-->
+      </Parameters>
+
+      <Inputs>
+        <CSV ref=\"DEM1\"/>
+        <CSV ref=\"WSEDEM1\"/>
+        <CSV ref=\"THALWEG1\"/>
+      </Inputs>
+
+      <Analyses>
+        <Analysis>
+          <Name>Hydraulic Analysis</Name>
+
+          <Metrics>
+            <Metric name=\"d84\">",Meta.Data$D84,"</Metric>
+            <Metric name=\"surface_roughness\">",Meta.Data$Roughness.Input,"</Metric>
+            <Metric name=\"measured_discharge\">",Meta.Data$Measured_Discharge,"</Metric>
+            <Metric name=\"modeled_discharge\">",Meta.Data$Discharge,"</Metric>
+            <Metric name=\"deltabc\">",Meta.Data$DeltaBC,"</Metric>
+            <Metric name=\"downstream_boundary\">",Meta.Data$Exit_BC,"</Metric>
+            <Metric name=\"trim_length\">",Meta.Data$TrimLength,"</Metric>
+            <Metric name=\"inlet\">",Meta.Data$Inlet,"</Metric>
+            <Metric name=\"outlet\">",Meta.Data$Outlet,"</Metric>
+            <Metric name=\"hev\">",Meta.Data$HEV,"</Metric>
+            <Metric name=\"left_reference\">",Meta.Data$Left.Reference,"</Metric>
+            <Metric name=\"top_reference\">",Meta.Data$Top.Reference,"</Metric>
+            <Metric name=\"computational_grid_spacing\">",Meta.Data$Comp.Grid.Spacing,"</Metric>
+          </Metrics>
+
+          <Outputs>
+            <CSV guid=\"",Metadata_guid,"\" id=\"metadata1\">
+              <Name>MetaData</Name>
+              <Path>Meta_Data.csv</Path>
+            </CSV>
+            <CSV guid=\"",DEMGR_guid,"\" id=\"demgridresults1\">
+              <Name>DEM Grid Results</Name>
+              <Path>dem_grid_results.csv</Path>
+            </CSV>
+          </Outputs>
+        </Analysis>
+      </Analyses>
+    </Hydro>
+  </Realizations>
+
+</Project>
+",sep=""), file=paste(sub.folder,"project.rs.xml",sep=""), append=T)
+
+
+
+
 
 } # end k
 
