@@ -657,6 +657,9 @@ if (site.list$SiteID[k]== "ENT00001-3A2") {dsouth=0}
 # New 1_16_17
 if (site.list$SiteID[k]== "CBW05583-344746") {dnorth=0}
 
+# New 3/27/2017
+if (site.list$SiteID[k]== "CBW05583-044489") {dwest = 0} 
+
 
 #####################################################
 if (min(dwest, deast, dnorth, dsouth)==dwest) {
