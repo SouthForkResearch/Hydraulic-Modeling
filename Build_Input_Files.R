@@ -663,7 +663,6 @@ if (site.list$SiteID[k]== "CBW05583-344746") {dnorth=0}
 if (site.list$SiteID[k]== "CBW05583-044489") {dwest = 0} 
 # New 4/4/2017
 if (site.list$SiteID[k]== "CBW05583-195417") {deast = 0} 
-if (site.list$SiteID[k]== "CBW05583-361417") {dsouth = 0} 
 
 
 #####################################################
