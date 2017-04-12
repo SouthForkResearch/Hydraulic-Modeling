@@ -574,6 +574,8 @@ if (site.list$SiteID[k]== "ENT00001-1G2") {dwest = 0}
 if (site.list$SiteID[k]== "MNM00001-000096") {dsouth = 0} 
 # New 4-4-2017
 if (site.list$SiteID[k]== "CBW05583-409033") {dnorth = 0} 
+# New 4/11/2017
+if (site.list$SiteID[k]== "CBW05583-193375") {dnorth = 0} 
 
 
 # Use the minimum distance to define inlet side. Cut some "slop" off the DEM grid to create the
@@ -663,6 +665,8 @@ if (site.list$SiteID[k]== "CBW05583-344746") {dnorth=0}
 if (site.list$SiteID[k]== "CBW05583-044489") {dwest = 0} 
 # New 4/4/2017
 if (site.list$SiteID[k]== "CBW05583-195417") {deast = 0} 
+# New 4/11/2017
+if (site.list$SiteID[k]== "LEM00002-000007") {dwest = 0} 
 
 
 #####################################################
