@@ -4,7 +4,7 @@ Modeling non-default flow rates requires only one additional step beyond that us
 
 Running at an alternate discharge will necessarily create a boundary condition error at the downstream boundary of the modeled flow.  Generally we simply accept and ignore this, as these errors tend to be small for high gradient flows.  However, there are instances where the modeler may have information on the change in water depth at or near the exit boundary between the measured discharge and the modeled discharge.  If this information is known, it can be specified in the column "DeltaBC".  These units are in meters.
 
-![cfd_sitelist](C:\Users\Owner\Desktop\cfd_sitelist.jpg)
+![cfd_sitelist](C:\Matt-SFR Files\Hydraulic Modeling\R Code to Build Input Files\R-Code\doc\cfd_sitelist.jpg)
 
 Note that folders containing results from non-default flow rates with begin with an "M" for "modeled" instead of an "S" for surveyed.
 
