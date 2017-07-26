@@ -1,0 +1,8 @@
+"Directory","SiteID","Year","WatershedName","VisitID","Model" = rep("Yes", length(idx)),
+"Measured.Discharge" = Lookup,
+"Modeled.Discharge" = MVI$Q[idx],
+"D84" = API D84 lookup,
+"Roughness" = API D84 *4/1000,
+"Trim.Length" = rep(2, length(idx)),
+"HEV" = rep(.01, length(idx)),
+"DeltaBC" = rep(0, length(idx)))
