@@ -1411,30 +1411,13 @@ file= "test.mdf")
 detach(thalweg)       
         
 
-
-
 ########################################################################################
 # Write xml file, which is needed to run from command line prompt
 
-cat("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>
-<deltaresHydro xmlns=\"http://schemas.deltares.nl/deltaresHydro\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://schemas.deltares.nl/deltaresHydro http://content.oss.deltares.nl/schemas/d_hydro-1.00.xsd\">
-    <control>
-        <sequence>
-            <start>myNameFlow</start>
-        </sequence>
-    </control>
-    <flow2D3D name=\"myNameFlow\">
-        <library>flow2d3d</library>
-        <mdfFile>test.mdf</mdfFile>
-    </flow2D3D>
-    <delftOnline>
-        <enabled>true</enabled>
-        <urlFile>test.url</urlFile>
-        <waitOnStart>false</waitOnStart>
-        <clientControl>true</clientControl>    <!-- client allowed to start, step, stop, terminate -->
-        <clientWrite>false</clientWrite>    <!-- client allowed to modify data -->
-    </delftOnline>
-</deltaresHydro>",
+cat("<?xml version='1.0' encoding='iso-8859-1'?>
+    <DeltaresHydro start='flow2d3d'>
+      <flow2d3d MDFile = 'test.mdf'></flow2d3d>
+    </DeltaresHydro>",
 file= "test.xml")
 #####################################################################
 
