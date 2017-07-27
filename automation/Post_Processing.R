@@ -179,7 +179,7 @@ options(digits=12)
 
 # Set the working directory back to where the Delft3D results are stored.
 WorkingDir = as.character(site.list$D3D.Input.Folder[k])
-setwd(paste(, "/", sep=""))
+setwd(WorkingDir)
 
 #################################
 #######################################################################
