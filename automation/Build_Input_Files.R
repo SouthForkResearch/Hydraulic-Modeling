@@ -136,12 +136,12 @@ k
 
 
 ######################################################################################################
-# Write vs.bat file.  This will be used after running the Delft3D code to convert the
+# Write vs.sh file.  This will be used after running the Delft3D code to convert the
 # Delft 3D output to text files which can be read by the post-processing R scripts.  
 
 # Start a new macro file....
-cat("path /SOME/BIN/DIR/HERE
-", file = "vs.bat")
+# cat("path /SOME/BIN/DIR/HERE
+# ", file = "vs.sh")
 
 # Looping Through All Sites for which we need to build input files
 
@@ -149,31 +149,26 @@ cat("path /SOME/BIN/DIR/HERE
 # a subset of sites, comment out the "for (k in site.index) {" line and re-rewite it to inly
 # run the index list you want to run.  
 
-for (k in site.index) {
-WorkingDir = as.character(site.list$D3D.Input.Folder[k])
+# for (k in site.index) {
+#   WorkingDir = as.character(site.list$D3D.Input.Folder[k])
 
-# Set the working directory
-# wd = paste(WorkingDir,"/", sep="")
-
-
-# Write the macro steps for this site.  This macro will generate output files for:
-# depth averaged velocity, water depth, bed shear strewss, water level, vorticity.  
-# Each output file also contains X and Y locations by default
-cat("chdir ", wd,"
-del U_Vel.tkl
-del V_Vel.tkl
-del Active.tkl
-del Bot_Depth.tkl
-del X_Coor.tkl
-del Y_Coor.tkl
-del Water_Level.tkl
-SET PAGER=more
-vs <test.vsb
-",
-sep="",
-file = "vs.bat",
-append=T)
-}
+  # Write the macro steps for this site.  This macro will generate output files for:
+  # depth averaged velocity, water depth, bed shear strewss, water level, vorticity.  
+  # Each output file also contains X and Y locations by default
+#   cat("rm U_Vel.tkl
+#   rm V_Vel.tkl
+#   rm Active.tkl
+#   rm Bot_Depth.tkl
+#   rm X_Coor.tkl
+#   rm Y_Coor.tkl
+#   rm Water_Level.tkl
+#   SET PAGER=more
+#   vs <test.vsb
+#   ",
+#   sep="",
+#   file = "vs.sh",
+#   append=T)
+# }
 
 
 #### Done looping through sites to build post-processing vs.bat"

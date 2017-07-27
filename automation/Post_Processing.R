@@ -9,19 +9,16 @@ Post.Processing.R.Code.Version = 1.1
 # Version 1.1 used output from vs.exe rather than Quickplot. Results are exactly the same, except
 # for some imperceptable roundoff error in the 4th or 5th or more decimal.
 
-#memory.limit(16194)
-
-#results.folder = "c:/Matt-SFR Files/Hydraulic Modeling/Delft3D Results Files/"
-#QA.folder = "c:/Matt-SFR Files/Hydraulic Modeling/Delft3D QA Files/"
-
 # Set this so scientific notation is not used when writing output files
 options(scipen=10)
 
-setwd( "C:/Matt-SFR Files/Hydraulic Modeling/R Code to Build Input Files")
+args = commandArgs(trailingOnly=TRUE)
+scriptdir = args[1]
+visitdir = args[2]
+cfdfile = args[3]
+setwd(scriptdir)
 
 library(raster)
-
-
 
 ############################################################################
 savedwd = getwd()
@@ -35,9 +32,6 @@ savedwd
 ######################################################################
 
 # Define "Working Dir" - directory with folders for each site DEM, WSEDEM and Thalweg .csv files
-
-#WorkingDir = "c:/Matt-SFR Files/Hydraulic Modeling Backup/Hydraulic Modeling/Restored or Changed Sites/"
-
 # All results files stored in a single folder.  Assign folder name here.
 
 dir.create("Delft3d Results Files", showWarnings=F)
@@ -62,8 +56,7 @@ colorp= colorRampPalette(c("dark blue","blue","cyan","green","yellow","orange", 
 
 
 # Set the working directory to read site list info
-#setwd("c:/Matt-SFR Files/Hydraulic Modeling Backup/Hydraulic Modeling")
-site.list=read.csv("CFD_Site_List.csv")
+site.list=read.csv(cfdfile)
 
 
 #################
@@ -106,10 +99,7 @@ if (site.list$Measured.Discharge[k] == site.list$Modeled.Discharge[k]){
 }
 
 site.list$Results.Folder = 
-  paste("c://Matt-SFR Files/Hydraulic Modeling/champ data from bucket/",
-         site.list$Year,"/",site.list$WatershedName,"/",
-         site.list$SiteID,"/VISIT_",
-         site.list$VisitID,"/", "Hydro/Results/",Variant, sep="")
+  paste(visitdir, "/Hydro/Results/",Variant, sep="")
 
 
 
@@ -121,7 +111,6 @@ site.list$Results.Folder =
 
 
 
-#dir("c:/Matt-SFR Files/Hydraulic Modeling Backup/Hydraulic Modeling//")
 # match sites in dite_list file to sites in directory
 #site.index = match(dir(WorkingDir),site.list$SiteID)
 #site.index
@@ -841,7 +830,7 @@ gc()
 # Generate project.rs.xml file starting here!!!!
 ################################################################
 
-all.data = read.csv("C:/Matt-SFR Files/Hydraulic Modeling/R Code to Build Input Files/R-Code/CHaMP_and_AEM_Metrics.csv",header=T)
+all.data = read.csv(paste(scriptdir,"CHaMP_and_AEM_Metrics.csv", sep=""),header=T)
 idx=match(Meta.Data$VisitID,all.data$VisitID)
 SiteID = all.data$SiteName[idx]
 
