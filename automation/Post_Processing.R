@@ -148,9 +148,8 @@ Meta.Data$Post.Processing.Date.Time = Sys.time()
 names(site.list)
 # Read the DEM
 # Set the working directory
-WorkingDir = as.character(site.list$Directory[k])
-WorkingDir
-setwd(paste(WorkingDir, "/", sep=""))
+newwd = paste(visitdir,"Hydro/HydroHydroModelInputs", sep="")
+setwd(newwd)
 
 data =read.csv("DEM.csv", header=F)
 
@@ -180,16 +179,15 @@ options(digits=12)
 
 # Set the working directory back to where the Delft3D results are stored.
 WorkingDir = as.character(site.list$D3D.Input.Folder[k])
-setwd(paste(WorkingDir, "/", sep=""))
-
+setwd(paste(, "/", sep=""))
 
 #################################
 #######################################################################
 #######################################################################
-# Read data files output from vs.exe
+# Read data files output from vs
 
 Uvel=as.numeric(scan(file= "U_vel.tkl", skip = 4, what="numeric"))
-Vvel=as.numeric(scan(file= "V_vel.tkl", skip = 4, what="numeric"))
+Vvel=as.numeric(scan(file= "V_Vel.tkl", skip = 4, what="numeric"))
 Xcoord=as.numeric(scan(file= "X_Coor.tkl", skip = 4, what="numeric"))
 Ycoord=as.numeric(scan(file= "Y_Coor.tkl", skip = 4, what="numeric"))
 BotDepth=as.numeric(scan(file= "Bot_Depth.tkl", skip = 4, what="numeric"))
@@ -958,8 +956,6 @@ cat(paste("","<?xml version=\"1.0\" encoding=\"utf-8\"?>
 
 
 } # end k
-
-
 
 
 setwd(savedwd)
