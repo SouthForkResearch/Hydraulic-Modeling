@@ -3,7 +3,8 @@
 # matt@southforkresearch.org
 #####################################################33333
 
-
+# prevent scientific notation (needed for folder name purposes)
+options(scipen=999)
 
 Post.Processing.R.Code.Version = 1.1
 # Version 1.1 used output from vs.exe rather than Quickplot. Results are exactly the same, except

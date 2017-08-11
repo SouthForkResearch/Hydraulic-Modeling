@@ -5,6 +5,9 @@
 # Updated 6_23_2015
 ##########################################################
 
+# prevent scientific notation (needed for folder name purposes)
+options(scipen=999)
+
 Build.Input.File.R.Version = 1.1 
 # 1.1 makes changes to enable using vs.exe instead of Quickplot to pull data from trim_test.dat
 Delft3D.Version = "5.01.00.2163"
