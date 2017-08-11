@@ -4,6 +4,8 @@
 # matt@southforkresearch.org
 # Updated 6_23_2015
 ##########################################################
+options(scipen=999)
+
 
 Build.Input.File.R.Version = 1.1
 # 1.1 makes changes to enable using vs.exe instead of Quickplot to pull data from trim_test.dat
