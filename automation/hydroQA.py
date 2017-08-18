@@ -26,6 +26,9 @@ import time
 
     Command line example: 
         c:\place\I\Pyt\Hydraulic-Modeling\automation\>python hydroQA.py sfr-champdata c:\imgs
+        C:\Matt-SFR Files\Hydraulic Modeling\R Code to Build Input Files\R-Code\automation\>python hydroQA.py sfr-champdata c:\imgs
+        C:\Hydro-QA\hydroQA.py --dryrun sfr-champdata c:\imgs
+
 
 """
 
@@ -53,9 +56,9 @@ class HydroQARun():
     # Change these if you want different images downloaded:
     IMAGES = [
         'Depth.jpg',
-        'X.Velocity.jpg',
-        'Y.Velocity.jpg',
-        'W_Depth.jpg'
+        'Velocity.Magnitude.jpg',
+        'Depth.Error.jpg',
+        'Boundary_Conditions.jpg'
     ]
     def __init__(self, bucket, imgdir, basekey, dryrun):
         self.bucket = bucket
@@ -84,8 +87,8 @@ class HydroQARun():
         # If we respond Y then move things from QA to Resultsw
         if result is True:
             logging.info("  QA Approved")
-            self.cleanupDestFolder('ResultsZZ')
-            self.moveQAToFolder('ResultsZZ')
+            self.cleanupDestFolder('Results')
+            self.moveQAToFolder('Results')
         else:
             # If we respond "N" then move QA results to QA_Reject so they won't be picked up next time we run this script
             logging.info("  QA Rejected")
@@ -147,12 +150,14 @@ class HydroQARun():
         """
         s3 = boto3.client('s3')
         localfile = os.path.join(self.imgdir, imgname)
-        s3path = os.path.join(self.basekey, imgname)
+        s3path = "/".join([self.basekey, imgname])
         # Delete the image if it already exists.
         if os.path.isfile(localfile):
             os.unlink(localfile)
-        with open(localfile, 'w') as f:
-            f.write(s3.get_object(Bucket=self.bucket, Key=s3path)['Body'].read())
+        s3r = boto3.resource('s3')
+        s3r.Bucket(self.bucket).download_file(s3path, localfile)
+        # with open(localfile, 'w+') as f:
+        #     f.write(s3.get_object(Bucket=self.bucket, Key=s3path)['Body'].read())
         logging.debug("  Downloaded Image: {}".format(imgname))
 
     def deleteLocalImage(self, imgname):
