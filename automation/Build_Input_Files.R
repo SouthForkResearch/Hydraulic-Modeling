@@ -224,7 +224,7 @@ rbt.version
 ##########################
 
 # Move to the specific directory for site site.list$SiteID[k]:
-newwd = paste(WorkingDir,"Hydro/HydroHydroModelInputs", sep="")
+newwd = paste(WorkingDir,"Hydro/HydroModelInputs/outputs", sep="")
 setwd(newwd)
 
 # Read the DEM into data`.frame "data"
