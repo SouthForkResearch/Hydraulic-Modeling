@@ -149,7 +149,7 @@ Meta.Data$Post.Processing.Date.Time = Sys.time()
 names(site.list)
 # Read the DEM
 # Set the working directory
-newwd = paste(visitdir,"Hydro/HydroHydroModelInputs", sep="")
+newwd = paste(visitdir,"Hydro/HydroModelInputs/outputs", sep="")
 setwd(newwd)
 
 data =read.csv("DEM.csv", header=F)
