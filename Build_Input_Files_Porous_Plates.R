@@ -1215,79 +1215,29 @@ cat(simtime, outflow.ws.level,"  ",outflow.ws.level,"\n", file=  "test.bct",appe
 # I've found tht specifying an inlet flow boundary condition tends to crash Delft3D
 # When I start with an empty channel.  This seems to work just fine.
 
-#if (inlet=="south") {
-#inlet.x = (1:NX)[Wdepth[,2] > 0]
-#if (length(inlet.x) == 0) {inlet.x=(1:NX)[depth[,2]==max(depth[,2])]}
-#inlet.y = rep(2, length(inlet.x))}
-#
-#if (inlet=="north") {
-#inlet.x = (1:NX)[Wdepth[,(NY-1)] > 0]
-#if (length(inlet.x) == 0) {inlet.x=(1:NX)[depth[,(NY-1)]==max(depth[,(NY-1)])]}
-#inlet.y = rep((NY-1), length(inlet.x))}
-#
-#if (inlet=="west") {
-#inlet.y = (1:NY)[Wdepth[2,] > 0]
-#if (length(inlet.y) == 0) {inlet.y=(1:NY)[depth[2,]==max(depth[2,])]}
-#inlet.x = rep(2, length(inlet.y))}
-#
-#if (inlet=="east") {
-#inlet.y = (1:NY)[Wdepth[(NX-1),] > 0]
-## if all points dry, assign inlet as lowest point 
-#if (length(inlet.y) == 0) {inlet.y=(1:NY)[depth[(NX-1),]==max(depth[(NX-1),])]}
-#inlet.x = rep((NX-1), length(inlet.y))
-#
-#}
-
 if (inlet=="south") {
-a=nn2(WSEDEM[,1:2],data.frame(GridX[,2],GridY[,2]),1)
-b=nn2(data[,1:2],data.frame(GridX[,2],GridY[,2]),1)
-inlet.depth = WSEDEM[a$nn.idx,3]-data[b$nn.idx,3]
-inlet.depth[a$nn.dists > .11] = 0
-inlet.depth[inlet.depth < 0] = 0
-inlet.x = (1:NX)[inlet.depth > 0]
-if (length(inlet.x) == 0) {inlet.y=(1:NX)[depth[2,]==max(depth[2,])]}
+inlet.x = (1:NX)[Wdepth[,2] > 0]
+if (length(inlet.x) == 0) {inlet.x=(1:NX)[depth[,2]==max(depth[,2])]}
 inlet.y = rep(2, length(inlet.x))}
 
 if (inlet=="north") {
-a=nn2(WSEDEM[,1:2],data.frame(GridX[,(NY-1)],GridY[,(NY-1)]),1)
-b=nn2(data[,1:2],data.frame(GridX[,(NY-1)],GridY[,(NY-1)]),1)
-inlet.depth = WSEDEM[a$nn.idx,3]-data[b$nn.idx,3]
-inlet.depth[a$nn.dists > .11] = 0
-inlet.depth[inlet.depth < 0] = 0
-
-inlet.x = (1:NX)[inlet.depth > 0]
-if (length(inlet.x) == 0) {inlet.y=(1:NX)[depth[(NY-1),]==max(depth[(NY-1),])]}
+inlet.x = (1:NX)[Wdepth[,(NY-1)] > 0]
+if (length(inlet.x) == 0) {inlet.x=(1:NX)[depth[,(NY-1)]==max(depth[,(NY-1)])]}
 inlet.y = rep((NY-1), length(inlet.x))}
 
 if (inlet=="west") {
-a=nn2(WSEDEM[,1:2],data.frame(GridX[2,],GridY[2,]),1)
-b=nn2(data[,1:2],data.frame(GridX[2,],GridY[2,]),1)
-inlet.depth = WSEDEM[a$nn.idx,3]-data[b$nn.idx,3]
-inlet.depth[a$nn.dists > .11] = 0
-inlet.depth[inlet.depth < 0] = 0
-
-inlet.y = (1:NY)[inlet.depth > 0]
+inlet.y = (1:NY)[Wdepth[2,] > 0]
 if (length(inlet.y) == 0) {inlet.y=(1:NY)[depth[2,]==max(depth[2,])]}
 inlet.x = rep(2, length(inlet.y))}
 
-dim(Wdepth)
-
-
 if (inlet=="east") {
-a=nn2(WSEDEM[,1:2],data.frame(GridX[(NX-1),],GridY[(NX-1),]),1)
-b=nn2(data[,1:2],data.frame(GridX[(NX-1),],GridY[(NX-1),]),1)
-inlet.depth = WSEDEM[a$nn.idx,3]-data[b$nn.idx,3]
-inlet.depth[a$nn.dists > .11] = 0
-inlet.depth[inlet.depth < 0] = 0
-
-inlet.y = (1:NY)[inlet.depth > 0]
+inlet.y = (1:NY)[Wdepth[(NX-1),] > 0]
 # if all points dry, assign inlet as lowest point 
 if (length(inlet.y) == 0) {inlet.y=(1:NY)[depth[(NX-1),]==max(depth[(NX-1),])]}
 
 inlet.x = rep((NX-1), length(inlet.y))
 
 }
-
 
 
 
@@ -1515,14 +1465,13 @@ pp.porosity = jam_porosity$Porosity_Pct[pp.porosity.idx]
 #9/12/2016 - This is a wild guess.  We can use this to try to
 # dial in a function that kind've sort've works here!
 
-# added .125*.1 for extra low friction run
-# added .25*.1 for very low friction run
 # added .5*.1 for low friction run
+# added .25*.1 for very low friction run
+# added .125*.1 for extra low friction run
 # added 1*.1 for "default" friction run
 # added 2*.1 for medium friction run
 # added 4*.1 for high friction run
-
-pp.friction =4*0.1*(100-pp.porosity)
+pp.friction =.125*0.1*(100-pp.porosity)
 pp.friction
 jpeg(paste(QA.folder,"porous_plates.jpg",sep=""), 6,6, units='in', res=600)
 ################################################################
@@ -1561,6 +1510,17 @@ dev.off()
 #x and y points need to convert to m and n locations
 Xs=seq(min(GridX), max(GridX), by=DX)
 Ys=seq(min(GridY), max(GridY), by=DX)
+
+pp.x
+Xs
+pp.y
+Ys
+?match
+pp.x
+Xs
+?round
+round(pp.x, .1)
+round(Xs, 1)
 pp.m=match(round(pp.x,2), round(Xs, 2))
 pp.n=match(round(pp.y,2),round(Ys,2))
 pp.m
@@ -2054,8 +2014,9 @@ file= "test.mdf")}
 
 # If we don't have a porous plate input file
 #if (("elj_locs.csv" %in% dir(WorkingDir))==FALSE) {
-
 if (("Jam_Locations.csv" %in% dir(WorkingDir))==FALSE) {
+
+#if (modDEM == FALSE) {
 # Write the mdf File!
 cat("Ident  = #Delft3D-FLOW 3.43.05.22651#
 Commnt =                  
