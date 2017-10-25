@@ -4,6 +4,7 @@
 # matt@southforkresearch.org
 # Updated 6_23_2015
 ##########################################################
+# prevent scientific notation (needed for folder name purposes)
 options(scipen=999)
 
 
