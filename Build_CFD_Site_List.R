@@ -50,7 +50,8 @@ VisitIDs
 setwd("C:/Matt-SFR Files/Hydraulic Modeling/R Code to Build Input Files")
 dir()
 
-MVI = read.csv("MetricVisitInformation.csv", header=T)
+#MVI = read.csv("MetricVisitInformation.csv", header=T)
+MVI = read.csv("C://Matt-SFR Files/Hydraulic Modeling/R Code to Build Input Files/R-Code/CHaMP_and_AEM_Metrics.csv", header=T)
 idx = match(VisitIDs, MVI$VisitID)
 idx
 
