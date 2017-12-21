@@ -1,6 +1,6 @@
 SiteName,WatershedName,Trim Length
 AEM001-Mill_Treatment,Basinwide,5
-AEM001-NewsomeCreek_Control,Basinwide,20
+AEM001-NewsomeCreek_Control,Basinwide,2
 AEM001-RedRiverMeanders_Control,Basinwide,40
 AEM001-SilverSideChannel_Treatment,Basinwide,10
 AEM001-TwispFloodplain_Control,Basinwide,10
@@ -40,7 +40,7 @@ CBW05583-020761,Methow,10
 CBW05583-021738,JohnDay,3
 CBW05583-029135,Lemhi,5
 CBW05583-030553,Methow,10
-CBW05583-035097,Methow,10
+CBW05583-035097,Methow,20
 CBW05583-036697,Methow,10
 CBW05583-038111,Lemhi,5
 CBW05583-040217,Methow,10
