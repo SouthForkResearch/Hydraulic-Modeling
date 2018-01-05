@@ -675,6 +675,8 @@ if (site.list$SiteID[k]== "LEM00002-000007") {dwest = 0}
 # New 12/8/2017
 if (site.list$SiteID[k]== "AEM001-NewsomeCreek_Control") {dsouth = 0} 
 
+if (site.list$SiteID[k]== "AEM001-SFTouchetRM7_Treatment") {dnorth = 0} 
+
 
 #####################################################
 if (min(dwest, deast, dnorth, dsouth)==dwest) {

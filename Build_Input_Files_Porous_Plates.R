@@ -1492,6 +1492,7 @@ pp.porosity = jam_porosity$Porosity_Pct[pp.porosity.idx]
 # dial in a function that kind've sort've works here!
 
 # added .5*.1 for low friction run
+# Note: .5*.1 = .05 is what we used for the Jan 2017 Asotin Runs
 # added .25*.1 for very low friction run
 # added .125*.1 for extra low friction run
 # added 1*.1 for "default" friction run
