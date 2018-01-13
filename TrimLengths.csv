@@ -2,6 +2,7 @@ SiteName,WatershedName,Trim Length
 AEM001-Mill_Treatment,Basinwide,5
 AEM001-NewsomeCreek_Control,Basinwide,2
 AEM001-RedRiverMeanders_Control,Basinwide,40
+AEM001-SFTouchetRM7_Treatment,Basinwide,7
 AEM001-SilverSideChannel_Treatment,Basinwide,10
 AEM001-TwispFloodplain_Control,Basinwide,10
 AEM001-TwispFloodplain_Control,Basinwide,10
@@ -9,21 +10,35 @@ AEM001-UpperWhitePine_Control,Basinwide,0.01
 AEM001-UpperWhitePine_Control,Basinwide,0.25
 AEM001-UpperWhitePine_Treatment,Basinwide,10
 AEM001-Wujek_Treatment,Basinwide,40
+ASW00001-CC-F2 P1BR,Asotin,5
 ASW00001-CC-F2P1BR,Asotin,5
+ASW00001-CC-F3 P1BR,Asotin,5
+ASW00001-CC-F3 P2BR,Asotin,0.5
 ASW00001-CC-F3P1BR,Asotin,5
 ASW00001-CC-F3P2BR,Asotin,0.5
-ASW00001-CC-F3 P2BR,Asotin,0.5
+ASW00001-CC-F4 P3BR,Asotin,5
 ASW00001-CC-F4P3BR,Asotin,5
+ASW00001-NF-F1 P1BR,Asotin,5
+ASW00001-NF-F1 P2BR,Asotin,5
 ASW00001-NF-F1P1BR,Asotin,5
 ASW00001-NF-F1P2BR,Asotin,5
+ASW00001-NF-F2 P1,Asotin,5
+ASW00001-NF-F2 P2,Asotin,5
 ASW00001-NF-F2P1,Asotin,5
 ASW00001-NF-F2P2,Asotin,5
+ASW00001-NF-F4 P1BR,Asotin,5
 ASW00001-NF-F4P1BR,Asotin,5
+ASW00001-SF-F2 P2BR,Asotin,5
 ASW00001-SF-F2P2BR,Asotin,5
+ASW00001-SF-F3 P2BR,Asotin,5
+ASW00001-SF-F3 P3BR,Asotin,5
 ASW00001-SF-F3P2BR,Asotin,5
 ASW00001-SF-F3P3BR,Asotin,5
+ASW00001-SF-F4 P1,Asotin,5
+ASW00001-SF-F4 P2,Asotin,5
 ASW00001-SF-F4P1,Asotin,5
 ASW00001-SF-F4P2,Asotin,5
+ASW00001-SF-F5 P3BR,Asotin,5
 ASW00001-SF-F5P3BR,Asotin,5
 CBW05583-003113,Methow,4
 CBW05583-009049,Methow,10
@@ -204,4 +219,5 @@ WENMASTER-000427,Wenatchee,10
 YFI00001-000595,Yankee Fork,5
 YFI00001-000835,Yankee Fork,5
 YFI00001-001709,Yankee Fork,5
-AEM001-SFTouchetRM7_Treatment,Basinwide,7
+,,
+,,
