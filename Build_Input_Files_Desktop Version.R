@@ -541,7 +541,7 @@ deast = abs(inletX-maxX)
 dnorth = abs(inletY-maxY)
 dsouth = abs(inletY-minY)
 
-#Inlet boundary manual corrections
+# Inlet boundary manual corrections
 if (site.list$SiteID[k]== "LEM00002-00001B") {dsouth = 0}
 if (site.list$SiteID[k]== "CBW05583-029535") {dwest = 0}
 if (site.list$SiteID[k]== "CBW05583-515058_ModifiedDEM") {dsouth=0}
@@ -638,6 +638,7 @@ dsouth = abs(outletY-minY)
 # A few sites, so far, have broken the code!  Manually outlet for boundaries for
 # The following!
 
+# Outlet boundary manual corrections
 if (site.list$SiteID[k]== "CBW05583-086186") {dwest = 0}
 if (site.list$SiteID[k]== "CBW05583-142490") {dnorth = 0}
 if (site.list$SiteID[k]== "CBW05583-232818") {dnorth = 0}
