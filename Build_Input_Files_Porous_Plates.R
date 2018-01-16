@@ -1465,7 +1465,7 @@ if (("Jam_Locations.csv" %in% dir(WorkingDir))) {
 
 dir(WorkingDir)
 pp = read.csv(paste(WorkingDir,"/Jam_Locations.csv",sep=""), header=T)
-jam_porosity =  read.csv(paste(WorkingDir,"/Jam_Porosity.csv",sep=""), header=T)
+#jam_porosity =  read.csv(paste(WorkingDir,"/Jam_Porosity.csv",sep=""), header=T)
 
 
 names(pp)
@@ -1480,12 +1480,21 @@ pp.nn$nn.idx
 pp.x = data$X[pp.nn$nn.dists < .11]
 pp.y = data$Y[pp.nn$nn.dists < .11]
 
+
 #plot(pp.x, pp.y, pch=19, cex=.1)
+#
 
-pp.id = pp[,3][pp.nn$nn.idx[pp.nn$nn.dists < .11]]
+# read porosity directory from pp file
+pp.porosity = pp[,3][pp.nn$nn.idx[pp.nn$nn.dists < .11]]
 
-pp.porosity.idx = match(pp.id, jam_porosity$Jam)
-pp.porosity = jam_porosity$Porosity_Pct[pp.porosity.idx]
+#col.idx = topo.colors(100)
+#plot((1:100),rep(1,100), col = col.idx) 
+#plot(pp.x, pp.y, col = col.idx[pp.porosity])
+
+# left over from when porosity was specified in a different file
+#pp.id = pp[,3][pp.nn$nn.idx[pp.nn$nn.dists < .11]]
+#pp.porosity.idx = match(pp.id, jam_porosity$Jam)
+#pp.porosity = jam_porosity$Porosity_Pct[pp.porosity.idx]
 
 #Convert porosity into a friction factor for porous plate
 #9/12/2016 - This is a wild guess.  We can use this to try to
@@ -1498,7 +1507,7 @@ pp.porosity = jam_porosity$Porosity_Pct[pp.porosity.idx]
 # added 1*.1 for "default" friction run
 # added 2*.1 for medium friction run
 # added 4*.1 for high friction run
-pp.friction =.125*0.1*(100-pp.porosity)
+pp.friction =.5*0.1*(100-pp.porosity)
 pp.friction
 jpeg(paste(QA.folder,"porous_plates.jpg",sep=""), 6,6, units='in', res=600)
 ################################################################
