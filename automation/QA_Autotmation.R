@@ -7,6 +7,7 @@
 # aws s3 sync s3://sfr-champdata/QA/2011/Entiat "C:\Matt-SFR Files\Hydraulic Modeling\QA\champ data from bucket\2011\Entiat" --exclude "*" --include "*\Depth.Error.jpg" --include "*\Boundary_Conditions.jpg" --exclude "*\Results\*" --exclude "*\ResultsZZ\*" --exclude "*\QA_Reject\*"
 # aws s3 sync s3://sfr-champdata/QA/2011/Wenatchee "C:\Matt-SFR Files\Hydraulic Modeling\QA\champ data from bucket\2011\Wenatchee" --exclude "*" --include "*\Depth.Error.jpg" --include "*\Boundary_Conditions.jpg" --exclude "*\Results\*" --exclude "*\ResultsZZ\*" --exclude "*\QA_Reject\*"
 # aws s3 sync s3://sfr-champdata/QA/2011/Tucannon "C:\Matt-SFR Files\Hydraulic Modeling\QA\champ data from bucket\2011\Tucannon" --exclude "*" --include "*\Depth.Error.jpg" --include "*\Boundary_Conditions.jpg" --exclude "*\Results\*" --exclude "*\ResultsZZ\*" --exclude "*\QA_Reject\*"
+# aws s3 sync s3://sfr-champdata/QA/2017/Asotin "C:\Matt-SFR Files\Hydraulic Modeling\QA\champ data from bucket\2017\Asotin" --exclude "*" --include "*\Depth.Error.jpg" --include "*\Boundary_Conditions.jpg" --exclude "*\Results\*" --exclude "*\ResultsZZ\*" --exclude "*\QA_Reject\*"
 
 # aws s3 sync s3://sfr-champdata/QA/2011/YankeeFork "C:\Matt-SFR Files\Hydraulic Modeling\QA\champ data from bucket\2011\YankeeFork" --exclude "*" --include "*\Depth.Error.jpg" --include "*\Boundary_Conditions.jpg" --exclude "*\Results\*" --exclude "*\ResultsZZ\*" --exclude "*\QA_Reject\*"
 # aws s3 sync s3://sfr-champdata/QA/2011/Lemhi "C:\Matt-SFR Files\Hydraulic Modeling\QA\champ data from bucket\2011\Lemhi" --exclude "*" --include "*\Depth.Error.jpg" --include "*\Boundary_Conditions.jpg" --exclude "*\Results\*" --exclude "*\ResultsZZ\*" --exclude "*\QA_Reject\*"
@@ -20,6 +21,7 @@
 # aws s3 sync s3://sfr-champdata/QA/2014 "C:\Matt-SFR Files\Hydraulic Modeling\QA\champ data from bucket\2014" --exclude "*" --include "*\Depth.Error.jpg" --include "*\Boundary_Conditions.jpg" --exclude "*\Results\*" --exclude "*\ResultsZZ\*" --exclude "*\QA_Reject\*"
 # aws s3 sync s3://sfr-champdata/QA/2015 "C:\Matt-SFR Files\Hydraulic Modeling\QA\champ data from bucket\2015" --exclude "*" --include "*\Depth.Error.jpg" --include "*\Boundary_Conditions.jpg" --exclude "*\Results\*" --exclude "*\ResultsZZ\*" --exclude "*\QA_Reject\*"
 # aws s3 sync s3://sfr-champdata/QA/2016 "C:\Matt-SFR Files\Hydraulic Modeling\QA\champ data from bucket\2016" --exclude "*" --include "*\Depth.Error.jpg" --include "*\Boundary_Conditions.jpg" --exclude "*\Results\*" --exclude "*\ResultsZZ\*" --exclude "*\QA_Reject\*"
+# aws s3 sync s3://sfr-champdata/QA/2017 "C:\Matt-SFR Files\Hydraulic Modeling\QA\champ data from bucket\2017" --exclude "*" --include "*\Depth.Error.jpg" --include "*\Boundary_Conditions.jpg" --exclude "*\Results\*" --exclude "*\ResultsZZ\*" --exclude "*\QA_Reject\*"
 
 # aws s3 sync s3://sfr-champdata/QA "C:\Matt-SFR Files\Hydraulic Modeling\QA\champ data from bucket" --exclude "*" --include "*\Depth.Error.jpg" --include "*\Boundary_Conditions.jpg" --exclude "*\Results\*" --exclude "*\ResultsZZ\*" --exclude "*\QA_Reject\*"
 
