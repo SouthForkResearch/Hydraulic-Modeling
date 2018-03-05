@@ -59,3 +59,4 @@ The remainder of the hydro modeling steps for porous structure modeling are exac
 
 Often users may wish to compare hydraulic model results with and without porous structures.  For example, users may wish to model the effects of simulated restoration and compare these to an un-restored state.  The same set of input files can be used to model both cases - simply run the model with porous structures as described above, and model the no-porous structure model using the default pre-processing file "Build_Input_Files.R", which will ignore all the porous structure inputs.  Upon completion of each model, users will want to move the results files to a separate location, so that each model run doesn't overwrite results from the previous run.
 
+[HYDRAULIC MODEL HOME](README.md)
